@@ -8,6 +8,7 @@ import '../../widgets/biz/biz.dart';
 import '../../styles/tokens.dart';
 import '../ai/ai_settings_page.dart';
 import '../automation/ocr_billing_page.dart';
+import '../automation/voice_billing_page.dart';
 import '../automation/auto_billing_settings_page.dart';
 import '../../l10n/app_localizations.dart';
 import '../../utils/ui_scale_extensions.dart';
@@ -88,6 +89,32 @@ class SmartBillingPage extends ConsumerWidget {
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const OcrBillingPage()),
+                          );
+                        },
+                      ),
+                      BeeTokens.cardDivider(context),
+                      AppListTile(
+                        leading: Icons.mic_none,
+                        title: '语音记账',
+                        subtitle: '离线语音识别转文字并解析',
+                        trailing: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'BETA',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const VoiceBillingPage()),
                           );
                         },
                       ),
