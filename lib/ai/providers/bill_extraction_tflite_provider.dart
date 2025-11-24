@@ -10,15 +10,13 @@ import '../tasks/bill_extraction_task.dart';
 /// 注意：这是一个基础实现框架
 /// 实际使用需要训练并部署真实的NER模型
 class BillExtractionTFLiteProvider extends TFLiteProvider<String, BillInfo> {
-
   BillExtractionTFLiteProvider({
-    ModelManager? modelManager,
+    super.modelManager,
   }) : super(
           modelId: PredefinedModels.billRecognition.id,
           supportedTaskType: 'bill_extraction',
           inputPreprocessor: _preprocessInput,
           outputParser: _parseOutput,
-          modelManager: modelManager,
         );
 
   @override
@@ -165,11 +163,16 @@ class NERTag {
   static const outside = 'O';
 
   static const all = [
-    beginAmount, insideAmount,
-    beginTime, insideTime,
-    beginMerchant, insideMerchant,
-    beginType, insideType,
-    beginAccount, insideAccount,
+    beginAmount,
+    insideAmount,
+    beginTime,
+    insideTime,
+    beginMerchant,
+    insideMerchant,
+    beginType,
+    insideType,
+    beginAccount,
+    insideAccount,
     outside,
   ];
 }

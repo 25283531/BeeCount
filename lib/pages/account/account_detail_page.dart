@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/db.dart' as db;
 import '../../providers.dart';
-import '../../providers/theme_providers.dart';
 import '../../widgets/ui/ui.dart';
 import '../../widgets/biz/biz.dart';
 import '../../styles/tokens.dart';
@@ -160,14 +159,18 @@ class AccountDetailPage extends ConsumerWidget {
 
                             return Column(
                               children: [
-                                if (index > 0)
-                                  BeeTokens.cardDivider(context),
+                                if (index > 0) BeeTokens.cardDivider(context),
                                 _TransactionTile(
                                   transaction: tx,
                                   currencyCode: currencyCode,
                                   primaryColor: primaryColor,
-                                  ledgers: ref.watch(ledgersStreamProvider).asData?.value ?? [],
-                                  categories: categoriesAsync.asData?.value ?? [],
+                                  ledgers: ref
+                                          .watch(ledgersStreamProvider)
+                                          .asData
+                                          ?.value ??
+                                      [],
+                                  categories:
+                                      categoriesAsync.asData?.value ?? [],
                                   currentAccountId: account.id, // 传入当前账户ID
                                   onTap: () =>
                                       _editTransaction(context, ref, tx),
@@ -327,7 +330,9 @@ class _TransactionTile extends ConsumerWidget {
         break;
       case 'transfer':
         // 转出显示红色，转入显示绿色
-        amountColor = isTransferOut ? BeeTokens.error(context) : BeeTokens.success(context);
+        amountColor = isTransferOut
+            ? BeeTokens.error(context)
+            : BeeTokens.success(context);
         break;
       default:
         amountColor = BeeTokens.textPrimary(context);
@@ -356,14 +361,16 @@ class _TransactionTile extends ConsumerWidget {
       // 获取对方账户名称
       if (isTransferOut && transaction.toAccountId != null) {
         // 转出：显示目标账户
-        final toAccountAsync = ref.watch(accountByIdProvider(transaction.toAccountId!));
+        final toAccountAsync =
+            ref.watch(accountByIdProvider(transaction.toAccountId!));
         final toAccountName = toAccountAsync.value?.name;
         if (toAccountName != null) {
           displaySubtitle = '${l10n.transferToPrefix} $toAccountName';
         }
       } else if (isTransferIn && transaction.accountId != null) {
         // 转入：显示来源账户
-        final fromAccountAsync = ref.watch(accountByIdProvider(transaction.accountId!));
+        final fromAccountAsync =
+            ref.watch(accountByIdProvider(transaction.accountId!));
         final fromAccountName = fromAccountAsync.value?.name;
         if (fromAccountName != null) {
           displaySubtitle = '${l10n.transferFromPrefix} $fromAccountName';
@@ -376,9 +383,8 @@ class _TransactionTile extends ConsumerWidget {
       } else if (category != null) {
         displayTitle = category.name;
       } else {
-        displayTitle = transaction.type == 'income'
-            ? l10n.homeIncome
-            : l10n.homeExpense;
+        displayTitle =
+            transaction.type == 'income' ? l10n.homeIncome : l10n.homeExpense;
       }
     }
 
@@ -448,7 +454,8 @@ class _TransactionTile extends ConsumerWidget {
                           ),
                           decoration: BoxDecoration(
                             color: primaryColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(4.0.scaled(context, ref)),
+                            borderRadius:
+                                BorderRadius.circular(4.0.scaled(context, ref)),
                           ),
                           child: Text(
                             ledgerName,
@@ -492,7 +499,9 @@ class _TransactionTile extends ConsumerWidget {
               value: transaction.type == 'expense'
                   ? -transaction.amount
                   : transaction.type == 'transfer'
-                      ? (isTransferOut ? -transaction.amount : transaction.amount)
+                      ? (isTransferOut
+                          ? -transaction.amount
+                          : transaction.amount)
                       : transaction.amount,
               signed: true,
               showCurrency: false,

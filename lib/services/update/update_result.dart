@@ -22,12 +22,8 @@ class UpdateResult {
 
   UpdateResult._({
     required this.success,
-    this.hasUpdate = false,
     this.message,
     this.filePath,
-    this.version,
-    this.downloadUrl,
-    this.releaseNotes,
     required this.type,
   });
 

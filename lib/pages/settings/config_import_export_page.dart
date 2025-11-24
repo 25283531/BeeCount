@@ -10,7 +10,6 @@ import '../../widgets/ui/ui.dart';
 import '../../widgets/biz/biz.dart';
 import '../../styles/tokens.dart';
 import '../../utils/ui_scale_extensions.dart';
-import '../../providers/theme_providers.dart';
 import '../../providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/config_export_service.dart';
@@ -144,7 +143,8 @@ class _ConfigImportExportPageState
     } catch (e) {
       logger.error('ConfigExport', '读取配置文件失败: $e');
       if (!mounted) return;
-      showToast(context, AppLocalizations.of(context).configExportReadFileFailed);
+      showToast(
+          context, AppLocalizations.of(context).configExportReadFileFailed);
     }
   }
 
@@ -312,7 +312,8 @@ class _ConfigImportExportPageState
                         onTap: _isExporting ? null : _exportConfig,
                       ),
                       // Android平台显示导出路径和打开按钮
-                      if (Platform.isAndroid && _lastExportedFilePath != null) ...[
+                      if (Platform.isAndroid &&
+                          _lastExportedFilePath != null) ...[
                         const Divider(height: 1, thickness: 0.5),
                         Container(
                           padding: EdgeInsets.symmetric(
@@ -332,7 +333,9 @@ class _ConfigImportExportPageState
                                   SizedBox(width: 8.0.scaled(context, ref)),
                                   Expanded(
                                     child: Text(
-                                      l10n.configExportSavedTo(_lastExportedFilePath!.replaceAll('/storage/emulated/0/', '')),
+                                      l10n.configExportSavedTo(
+                                          _lastExportedFilePath!.replaceAll(
+                                              '/storage/emulated/0/', '')),
                                       style: TextStyle(
                                         fontSize: 13.0.scaled(context, ref),
                                         color: BeeTokens.textSecondary(context),
@@ -346,12 +349,16 @@ class _ConfigImportExportPageState
                                 width: double.infinity,
                                 child: OutlinedButton.icon(
                                   onPressed: _viewExportedContent,
-                                  icon: const Icon(Icons.visibility_outlined, size: 18),
+                                  icon: const Icon(Icons.visibility_outlined,
+                                      size: 18),
                                   label: Text(l10n.configExportViewContent),
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: ref.watch(primaryColorProvider),
+                                    foregroundColor:
+                                        ref.watch(primaryColorProvider),
                                     side: BorderSide(
-                                      color: ref.watch(primaryColorProvider).withValues(alpha: 0.5),
+                                      color: ref
+                                          .watch(primaryColorProvider)
+                                          .withValues(alpha: 0.5),
                                     ),
                                   ),
                                 ),

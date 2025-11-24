@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers.dart';
-import '../../providers/theme_providers.dart';
 import '../../widgets/ui/ui.dart';
 import '../../widgets/biz/amount_text.dart';
 import '../../widgets/biz/section_card.dart';
@@ -124,7 +123,7 @@ class AccountsPage extends ConsumerWidget {
                             ),
                             subtitle: Text(l10n.accountsFeatureDescription),
                             value: enabled,
-                            activeColor: primaryColor,
+                            activeThumbColor: primaryColor,
                             onChanged: (value) async {
                               await ref
                                   .read(accountFeatureSetterProvider)
@@ -161,7 +160,8 @@ class AccountsPage extends ConsumerWidget {
                               ),
                               SizedBox(height: 24.0.scaled(context, ref)),
                               ElevatedButton.icon(
-                                onPressed: () => _addAccount(context, ref, ledgerId),
+                                onPressed: () =>
+                                    _addAccount(context, ref, ledgerId),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryColor,
                                   foregroundColor: Colors.white,
@@ -267,7 +267,8 @@ class AccountsPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _addAccount(BuildContext context, WidgetRef ref, int ledgerId) async {
+  Future<void> _addAccount(
+      BuildContext context, WidgetRef ref, int ledgerId) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => AccountEditPage(ledgerId: ledgerId),
@@ -469,19 +470,24 @@ class _AccountCard extends ConsumerWidget {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                        SizedBox(width: 8.0.scaled(context, ref)),
+                                        SizedBox(
+                                            width: 8.0.scaled(context, ref)),
                                         // v1.15.0: 显示币种名称（如：人民币、美元）
                                         Container(
                                           padding: EdgeInsets.symmetric(
-                                            horizontal: 6.0.scaled(context, ref),
+                                            horizontal:
+                                                6.0.scaled(context, ref),
                                             vertical: 2.0.scaled(context, ref),
                                           ),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withValues(alpha: 0.2),
-                                            borderRadius: BorderRadius.circular(4.0.scaled(context, ref)),
+                                            color: Colors.white
+                                                .withValues(alpha: 0.2),
+                                            borderRadius: BorderRadius.circular(
+                                                4.0.scaled(context, ref)),
                                           ),
                                           child: Text(
-                                            getCurrencyName(account.currency, context),
+                                            getCurrencyName(
+                                                account.currency, context),
                                             style: const TextStyle(
                                               fontSize: 12,
                                               color: Colors.white,

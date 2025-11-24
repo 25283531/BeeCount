@@ -11,34 +11,34 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_riverpod: ^2.5.1
+  flutter_riverpod: ^3.0.3
   drift: ^2.20.2
   sqlite3_flutter_libs: ^0.5.24
   path_provider: ^2.1.4
   path: ^1.9.0
-  intl: ^0.19.0
-  fl_chart: ^0.68.0
+  intl: ^0.20.2
+  fl_chart: ^1.1.1
   shared_preferences: ^2.3.2
-  csv: ^5.0.2
-  file_picker: ^8.1.2
+  csv: ^6.0.0
+  file_picker: ^10.3.7
   supabase_flutter: ^2.5.6
   crypto: ^3.0.5
   flutter_svg: ^2.0.10+1
-  package_info_plus: ^8.0.2
+  package_info_plus: ^9.0.0
   url_launcher: ^6.3.0
   in_app_review: ^2.0.9
   http: ^1.2.2
-  share_plus: ^10.0.0
+  share_plus: ^12.0.1
   permission_handler: ^11.3.1
   dio: ^5.4.3+1
   open_filex: ^4.4.0
-  flutter_local_notifications: ^17.2.2
-  timezone: ^0.9.4
+  flutter_local_notifications: ^19.5.0
+  timezone: ^0.10.1
   flutter_list_view: ^1.1.29
   visibility_detector: ^0.4.0+2
   reorderable_grid_view: ^2.2.8
   excel: ^4.0.6
-  home_widget: ^0.7.0
+  home_widget: ^0.8.1
   google_mlkit_text_recognition: ^0.15.0
   image_picker: ^1.1.2
   gbk_codec: ^0.4.0
@@ -58,15 +58,15 @@ dependencies:
     path: packages/flutter_cloud_sync_supabase
   flutter_cloud_sync_webdav:
     path: packages/flutter_cloud_sync_webdav
-  vosk_flutter_2: ^0.1.0
+  vosk_flutter_2: ^1.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   build_runner: ^2.4.10
   drift_dev: ^2.20.2
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
   # Testing framework enhancements
   mocktail: ^1.0.4
   integration_test:

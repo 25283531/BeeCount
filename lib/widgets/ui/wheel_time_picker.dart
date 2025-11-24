@@ -5,7 +5,7 @@ import '../../styles/tokens.dart';
 
 class WheelTimePicker extends StatefulWidget {
   final TimeOfDay initial;
-  
+
   const WheelTimePicker({
     super.key,
     required this.initial,
@@ -72,7 +72,9 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: isDark ? BeeTokens.border(context) : const Color(0xFFE5E5E5),
+                    color: isDark
+                        ? BeeTokens.border(context)
+                        : const Color(0xFFE5E5E5),
                     width: 0.5,
                   ),
                 ),
@@ -83,7 +85,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      AppLocalizations.of(context)!.commonCancel,
+                      AppLocalizations.of(context).commonCancel,
                       style: TextStyle(
                         fontSize: 16,
                         color: BeeTokens.textTertiary(context),
@@ -91,7 +93,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                     ),
                   ),
                   Text(
-                    AppLocalizations.of(context)!.commonSelectTime,
+                    AppLocalizations.of(context).commonSelectTime,
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
@@ -100,10 +102,11 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop(TimeOfDay(hour: hour, minute: minute));
+                      Navigator.of(context)
+                          .pop(TimeOfDay(hour: hour, minute: minute));
                     },
                     child: Text(
-                      AppLocalizations.of(context)!.commonOk,
+                      AppLocalizations.of(context).commonOk,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -114,7 +117,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                 ],
               ),
             ),
-            
+
             // 时间选择器
             SizedBox(
               height: 216,
@@ -180,7 +183,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 20),
           ],
         ),

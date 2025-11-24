@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'pages/main/home_page.dart';
-import 'providers/theme_providers.dart';
 import 'pages/main/analytics_page.dart';
 import 'pages/main/ledgers_page_new.dart';
 import 'pages/main/mine_page.dart';
@@ -97,7 +96,8 @@ class _BeeAppState extends ConsumerState<BeeApp> with WidgetsBindingObserver {
   }
 
   /// 打开相机拍照并自动记账
-  Future<void> _openCameraForBilling(BuildContext context, WidgetRef ref) async {
+  Future<void> _openCameraForBilling(
+      BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
 
     try {
@@ -176,8 +176,11 @@ class _BeeAppState extends ConsumerState<BeeApp> with WidgetsBindingObserver {
       if (!context.mounted) return;
 
       if (transactionId != null) {
-        final transactionType = (ocrResult.aiType == 'income') ? 'income' : 'expense';
-        final typeText = transactionType == 'income' ? l10n.aiTypeIncome : l10n.aiTypeExpense;
+        final transactionType =
+            (ocrResult.aiType == 'income') ? 'income' : 'expense';
+        final typeText = transactionType == 'income'
+            ? l10n.aiTypeIncome
+            : l10n.aiTypeExpense;
         final amount = ocrResult.amount!.abs().toStringAsFixed(2);
         showToast(context, l10n.aiOcrSuccess(typeText, amount));
       } else {
@@ -223,157 +226,168 @@ class _BeeAppState extends ConsumerState<BeeApp> with WidgetsBindingObserver {
               children: _pages,
             ),
             bottomNavigationBar: BottomAppBar(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? const Color(0xFF1C1C1E)  // ⭐ 暗黑模式：深灰（与卡片同色）
-              : Colors.white,             // 亮色模式：白色
-          shape: null,  // ⭐ 去掉凹口设计
-          notchMargin: 0,
-          elevation: 8,  // ⭐ 保持阴影，让Tab栏突起
-          child: SizedBox(
-            height: 60.0.scaled(context, ref),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(5, (i) {
-                if (i == 2) {
-                  // 中间预留给 FAB 的槽位，确保 5 等分
-                  return const Expanded(child: SizedBox());
-                }
-                // 槽位转页面索引
-                final pageIndex = i > 2 ? i - 1 : i;
-                final activeVisualIndex = idx >= 2 ? idx + 1 : idx;
-                final active = activeVisualIndex == i;
-                final isDark = Theme.of(context).brightness == Brightness.dark;
-                Color color = active
-                    ? Theme.of(context).colorScheme.primary
-                    : (isDark ? Colors.white70 : Colors.black54); // ⭐ 自适应未选中颜色
-                IconData icon;
-                String label;
-                final l10n = AppLocalizations.of(context);
-                switch (pageIndex) {
-                  case 0:
-                    icon = Icons.list_alt_rounded;
-                    label = l10n.tabHome;
-                    break;
-                  case 1:
-                    icon = Icons.pie_chart_rounded;
-                    label = l10n.tabAnalytics;
-                    break;
-                  case 2:
-                    icon = Icons.menu_book_rounded;
-                    label = l10n.tabLedgers;
-                    break;
-                  default:
-                    icon = Icons.person_rounded;
-                    label = l10n.tabMine;
-                }
-                return Expanded(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      final now = DateTime.now();
-                      // 检测双击：同一个标签在300ms内连续点击两次
-                      if (_lastTappedIndex == pageIndex &&
-                          _lastTapTime != null &&
-                          now.difference(_lastTapTime!) < const Duration(milliseconds: 300)) {
-                        // 双击首页标签，触发滚动到顶部
-                        if (pageIndex == 0) {
-                          ref.read(homeScrollToTopProvider.notifier).state++;
-                        }
-                        // 重置双击状态
-                        _lastTapTime = null;
-                        _lastTappedIndex = null;
-                      } else {
-                        // 记录本次点击
-                        _lastTapTime = now;
-                        _lastTappedIndex = pageIndex;
-                        // 切换标签
-                        ref.read(bottomTabIndexProvider.notifier).state = pageIndex;
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 8.0.scaled(context, ref),
-                        horizontal: 4.0.scaled(context, ref),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(icon, color: color, size: 24),
-                          SizedBox(height: 4.0.scaled(context, ref)),
-                          Text(label,
-                              style: TextStyle(
-                                  fontSize: 11,
-                                  color: color,
-                                  fontWeight: active
-                                      ? FontWeight.w600
-                                      : FontWeight.w400)),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-        floatingActionButton: Consumer(builder: (context, ref, _) {
-          final style = ref.watch(headerStyleProvider);
-          final color = Theme.of(context).colorScheme.primary;
-          final cameraFirst = ref.watch(fabCameraFirstProvider).value ?? false;
-
-          // 根据设置决定图标：拍照优先显示相机，手动优先显示+号
-          final icon = cameraFirst ? Icons.camera_alt : Icons.add;
-
-          return SizedBox(
-            width: 80.0.scaled(context, ref),
-            height: 80.0.scaled(context, ref),
-            child: GestureDetector(
-              onLongPress: () async {
-                // 长按行为：与短按相反
-                if (cameraFirst) {
-                  // 拍照优先模式：长按打开手动记账
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const TransactionEditorPage(
-                        initialKind: 'expense',
-                        quickAdd: true,
-                      ),
-                    ),
-                  );
-                } else {
-                  // 手动优先模式：长按打开拍照记账
-                  await _openCameraForBilling(context, ref);
-                }
-              },
-              child: FloatingActionButton(
-                heroTag: 'addFab',
-                elevation: 8,  // ⭐ 保持阴影
-                shape: const CircleBorder(),
-                backgroundColor: style == 'primary' ? color : color,  // ⭐ 主题色背景
-                onPressed: () async {
-                  // 短按行为：根据设置决定
-                  if (cameraFirst) {
-                    // 拍照优先模式：短按打开拍照记账
-                    await _openCameraForBilling(context, ref);
-                  } else {
-                    // 手动优先模式：短按打开手动记账
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const TransactionEditorPage(
-                          initialKind: 'expense',
-                          quickAdd: true,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF1C1C1E) // ⭐ 暗黑模式：深灰（与卡片同色）
+                  : Colors.white, // 亮色模式：白色
+              shape: null, // ⭐ 去掉凹口设计
+              notchMargin: 0,
+              elevation: 8, // ⭐ 保持阴影，让Tab栏突起
+              child: SizedBox(
+                height: 60.0.scaled(context, ref),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(5, (i) {
+                    if (i == 2) {
+                      // 中间预留给 FAB 的槽位，确保 5 等分
+                      return const Expanded(child: SizedBox());
+                    }
+                    // 槽位转页面索引
+                    final pageIndex = i > 2 ? i - 1 : i;
+                    final activeVisualIndex = idx >= 2 ? idx + 1 : idx;
+                    final active = activeVisualIndex == i;
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    Color color = active
+                        ? Theme.of(context).colorScheme.primary
+                        : (isDark
+                            ? Colors.white70
+                            : Colors.black54); // ⭐ 自适应未选中颜色
+                    IconData icon;
+                    String label;
+                    final l10n = AppLocalizations.of(context);
+                    switch (pageIndex) {
+                      case 0:
+                        icon = Icons.list_alt_rounded;
+                        label = l10n.tabHome;
+                        break;
+                      case 1:
+                        icon = Icons.pie_chart_rounded;
+                        label = l10n.tabAnalytics;
+                        break;
+                      case 2:
+                        icon = Icons.menu_book_rounded;
+                        label = l10n.tabLedgers;
+                        break;
+                      default:
+                        icon = Icons.person_rounded;
+                        label = l10n.tabMine;
+                    }
+                    return Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          final now = DateTime.now();
+                          // 检测双击：同一个标签在300ms内连续点击两次
+                          if (_lastTappedIndex == pageIndex &&
+                              _lastTapTime != null &&
+                              now.difference(_lastTapTime!) <
+                                  const Duration(milliseconds: 300)) {
+                            // 双击首页标签，触发滚动到顶部
+                            if (pageIndex == 0) {
+                              ref
+                                  .read(homeScrollToTopProvider.notifier)
+                                  .state++;
+                            }
+                            // 重置双击状态
+                            _lastTapTime = null;
+                            _lastTappedIndex = null;
+                          } else {
+                            // 记录本次点击
+                            _lastTapTime = now;
+                            _lastTappedIndex = pageIndex;
+                            // 切换标签
+                            ref.read(bottomTabIndexProvider.notifier).state =
+                                pageIndex;
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 8.0.scaled(context, ref),
+                            horizontal: 4.0.scaled(context, ref),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(icon, color: color, size: 24),
+                              SizedBox(height: 4.0.scaled(context, ref)),
+                              Text(label,
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      color: color,
+                                      fontWeight: active
+                                          ? FontWeight.w600
+                                          : FontWeight.w400)),
+                            ],
+                          ),
                         ),
                       ),
                     );
-                  }
-                },
-                child: Icon(icon, color: Colors.white, size: 34.0.scaled(context, ref)),
+                  }),
+                ),
               ),
             ),
-          );
-        }),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: Consumer(builder: (context, ref, _) {
+              final style = ref.watch(headerStyleProvider);
+              final color = Theme.of(context).colorScheme.primary;
+              final cameraFirst =
+                  ref.watch(fabCameraFirstProvider).value ?? false;
+
+              // 根据设置决定图标：拍照优先显示相机，手动优先显示+号
+              final icon = cameraFirst ? Icons.camera_alt : Icons.add;
+
+              return SizedBox(
+                width: 80.0.scaled(context, ref),
+                height: 80.0.scaled(context, ref),
+                child: GestureDetector(
+                  onLongPress: () async {
+                    // 长按行为：与短按相反
+                    if (cameraFirst) {
+                      // 拍照优先模式：长按打开手动记账
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const TransactionEditorPage(
+                            initialKind: 'expense',
+                            quickAdd: true,
+                          ),
+                        ),
+                      );
+                    } else {
+                      // 手动优先模式：长按打开拍照记账
+                      await _openCameraForBilling(context, ref);
+                    }
+                  },
+                  child: FloatingActionButton(
+                    heroTag: 'addFab',
+                    elevation: 8, // ⭐ 保持阴影
+                    shape: const CircleBorder(),
+                    backgroundColor:
+                        style == 'primary' ? color : color, // ⭐ 主题色背景
+                    onPressed: () async {
+                      // 短按行为：根据设置决定
+                      if (cameraFirst) {
+                        // 拍照优先模式：短按打开拍照记账
+                        await _openCameraForBilling(context, ref);
+                      } else {
+                        // 手动优先模式：短按打开手动记账
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const TransactionEditorPage(
+                              initialKind: 'expense',
+                              quickAdd: true,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Icon(icon,
+                        color: Colors.white, size: 34.0.scaled(context, ref)),
+                  ),
+                ),
+              );
+            }),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
           ),
           // 开发模式下的主题切换按钮
           if (kDebugMode)

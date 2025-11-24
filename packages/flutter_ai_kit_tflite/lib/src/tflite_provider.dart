@@ -117,7 +117,7 @@ abstract class TFLiteProvider<TInput, TOutput>
     final modelPath = await _modelManager.getModelPath(modelId);
     print('📦 [TFLiteProvider] 加载模型: $modelPath');
 
-    _interpreter = await Interpreter.fromFile(File(modelPath));
+    _interpreter = Interpreter.fromFile(File(modelPath));
 
     print('✅ [TFLiteProvider] 模型已加载');
     print('   输入形状: ${_interpreter!.getInputTensors().map((t) => t.shape)}');

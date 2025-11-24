@@ -1,0 +1,187 @@
+name: Android CI Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build-tools and platforms
+        run: |
+          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager --list | grep installed
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.3"
+          channel: "stable"
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Flutter pub upgrade (optional)
+        run: flutter pub upgrade --major-versions || echo "Pub upgrade skipped (non-critical)"
+
+      - name: Flutter analyze
+        run: flutter analyze
+
+      - name: Flutter test
+        run: flutter test
+
+      - name: Setup Android signing (debug)
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          # 尝试使用提供的签名密钥，如果没有则使用调试密钥
+          mkdir -p android/app
+          if [ -n "${ANDROID_KEYSTORE_BASE64:-}" ]; then
+            echo "Writing Android keystore from secret..."
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/ci-release.keystore
+            printf '%s\n' \
+              'storeFile=ci-release.keystore' \
+              "storePassword=${ANDROID_KEYSTORE_PASSWORD}" \
+              "keyAlias=${ANDROID_KEY_ALIAS}" \
+              "keyPassword=${ANDROID_KEY_PASSWORD}" \
+              > android/key.properties
+            echo "key.properties created."
+          else
+            echo "Using debug keystore for CI build"
+            # 创建默认的key.properties文件以避免构建错误
+            if [ ! -f android/key.properties ]; then
+              echo "storeFile=debug.keystore" > android/key.properties
+              echo "storePassword=android" >> android/key.properties
+              echo "keyAlias=androiddebugkey" >> android/key.properties
+              echo "keyPassword=android" >> android/key.properties
+            fi
+          fi
+
+      - name: Update version info
+        run: |
+          # 使用分支名和提交哈希作为版本标识
+          BRANCH_NAME=$(echo ${{ github.ref_name }} | sed 's/\//-/g')
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          VERSION="${BRANCH_NAME}-${SHORT_SHA}"
+          BUILD_NUMBER=${{ github.run_number }}
+          
+          # 备份原始 pubspec.yaml
+          cp pubspec.yaml pubspec.yaml.backup
+          # 更新版本号
+          sed -i "s/^version: .*/version: 0.0.1+${BUILD_NUMBER}/" pubspec.yaml
+          echo "Updated version for CI build: ${VERSION}"
+
+      - name: Build APK (release)
+        run: |
+          export CI_VERSION="${{ github.ref_name }}-${{ github.sha }}"
+          export BUILD_TIME="$(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          flutter build apk --release --flavor prod \
+            --dart-define=CI_VERSION="$CI_VERSION" \
+            --dart-define=BUILD_TIME="$BUILD_TIME"
+
+      - name: Verify build outputs
+        run: |
+          echo "Checking build outputs..."
+          ls -la build/app/outputs/flutter-apk/ || echo "APK directory not found"
+          
+          # 查找所有生成的APK文件
+          find build/app/outputs/flutter-apk -name "*.apk" -type f
+
+      - name: Rename and organize APKs with metadata
+        run: |
+          BRANCH_NAME=$(echo ${{ github.ref_name }} | sed 's/\//-/g')
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          BUILD_NUMBER=${{ github.run_number }}
+          BUILD_TIME=$(date -u +"%Y%m%d-%H%M%S")
+          
+          # 创建结构化的输出目录
+          mkdir -p build/artifacts
+          mkdir -p build/metadata
+          
+          # 处理所有APK文件
+          APK_COUNT=0
+          for APK_FILE in build/app/outputs/flutter-apk/*.apk; do
+            if [ -f "$APK_FILE" ]; then
+              APK_NAME=$(basename "$APK_FILE")
+              # 从文件名提取flavor信息（如果有）
+              FLAVOR="dev"
+              if [[ "$APK_NAME" == *"prod"* ]]; then
+                FLAVOR="prod"
+              fi
+              
+              # 创建带有详细信息的新文件名
+              NEW_NAME="beecount-${FLAVOR}-${BRANCH_NAME}-${SHORT_SHA}-${BUILD_NUMBER}-${BUILD_TIME}.apk"
+              cp "$APK_FILE" "build/artifacts/$NEW_NAME"
+              
+              # 收集APK信息
+              echo "$NEW_NAME" >> build/metadata/apk_list.txt
+              echo "File: $NEW_NAME" >> build/metadata/build_info.txt
+              echo "Path: build/artifacts/$NEW_NAME" >> build/metadata/build_info.txt
+              echo "Size: $(du -h "build/artifacts/$NEW_NAME" | cut -f1)" >> build/metadata/build_info.txt
+              echo "Created: $(date -u)" >> build/metadata/build_info.txt
+              echo "----------------------" >> build/metadata/build_info.txt
+              
+              APK_COUNT=$((APK_COUNT+1))
+              echo "Processed: $NEW_NAME"
+            fi
+          done
+          
+          # 添加基本构建信息
+          echo "Build Details:" > build/metadata/build_summary.txt
+          echo "Branch: ${{ github.ref_name }}" >> build/metadata/build_summary.txt
+          echo "Commit: ${{ github.sha }}" >> build/metadata/build_summary.txt
+          echo "Build Number: ${{ github.run_number }}" >> build/metadata/build_summary.txt
+          echo "Build Time: $(date -u)" >> build/metadata/build_summary.txt
+          echo "APKs Generated: $APK_COUNT" >> build/metadata/build_summary.txt
+          echo "Build URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> build/metadata/build_summary.txt
+          
+          # 显示结果
+          echo "Generated $APK_COUNT APK(s)"
+          cat build/metadata/build_summary.txt
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: beecount-android-${{ github.ref_name }}-${{ github.run_number }}
+          path: |
+            build/artifacts/*.apk
+            build/metadata/*
+          retention-days: 7
+
+      - name: Notify build completion
+        if: success()
+        run: |
+          echo "✅ Android CI Build completed successfully!"
+          echo "📱 Available APKs:"
+          cat build/metadata/apk_list.txt
+          echo "🔗 Download from: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Clean up
+        if: always()
+        run: |
+          # 恢复原始 pubspec.yaml
+          if [ -f pubspec.yaml.backup ]; then
+            mv pubspec.yaml.backup pubspec.yaml
+          fi

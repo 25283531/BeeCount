@@ -11,7 +11,6 @@ import '../automation/ocr_billing_page.dart';
 import '../automation/voice_billing_page.dart';
 import '../automation/auto_billing_settings_page.dart';
 import '../../l10n/app_localizations.dart';
-import '../../utils/ui_scale_extensions.dart';
 
 /// 智能记账二级页面
 class SmartBillingPage extends ConsumerWidget {
@@ -95,8 +94,8 @@ class SmartBillingPage extends ConsumerWidget {
                       BeeTokens.cardDivider(context),
                       AppListTile(
                         leading: Icons.mic_none,
-                        title: '语音记账',
-                        subtitle: '离线语音识别转文字并解析',
+                        title: l10n.voiceBilling,
+                        subtitle: l10n.voiceBillingDesc,
                         trailing: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(

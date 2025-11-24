@@ -1501,5 +1501,7 @@
   "welcomeCategoryModeHierarchicalDescription": "Detailed management",
   "welcomeCategoryModeHierarchicalFeature1": "Support parent-child category levels",
   "welcomeCategoryModeHierarchicalFeature2": "More detailed transaction classification",
-  "welcomeCategoryModeHierarchicalFeature3": "Perfect for detailed management"
+  "welcomeCategoryModeHierarchicalFeature3": "Perfect for detailed management",
+  "voiceBilling": "Voice Billing",
+  "voiceBillingDesc": "Offline voice recognition and text parsing"
 }

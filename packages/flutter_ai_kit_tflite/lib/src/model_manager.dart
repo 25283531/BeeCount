@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
-import 'dart:convert';
 
 import 'model_info.dart';
 
@@ -98,7 +97,7 @@ class ModelManager {
       int downloadedBytes = 0;
       if (File(tempPath).existsSync()) {
         downloadedBytes = await File(tempPath).length();
-        print('📥 [ModelManager] 恢复下载，已下载: ${downloadedBytes}字节');
+        print('📥 [ModelManager] 恢复下载，已下载: $downloadedBytes字节');
       }
 
       // 下载
@@ -188,8 +187,7 @@ class ModelManager {
 
     final files = await modelsDir
         .list()
-        .where((entity) =>
-            entity is File && entity.path.endsWith('.tflite'))
+        .where((entity) => entity is File && entity.path.endsWith('.tflite'))
         .toList();
 
     return files

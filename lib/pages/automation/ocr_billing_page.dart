@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../services/automation/ocr_service.dart';
 import '../../services/automation/bill_creation_service.dart';
-import '../../widgets/ui/primary_header.dart';
 import '../../widgets/ui/ui.dart';
 import '../../styles/tokens.dart';
 import '../../providers.dart';
@@ -78,9 +77,12 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
       // 使用BillCreationService匹配分类
       final billCreationService = BillCreationService(db);
 
-      final categoryKind = (ocrResult.aiType == 'income') ? 'income' : 'expense';
-      final categories = await billCreationService.getCategoriesByType(categoryKind);
-      final suggestedCategoryId = await billCreationService.matchCategory(ocrResult, categories);
+      final categoryKind =
+          (ocrResult.aiType == 'income') ? 'income' : 'expense';
+      final categories =
+          await billCreationService.getCategoriesByType(categoryKind);
+      final suggestedCategoryId =
+          await billCreationService.matchCategory(ocrResult, categories);
 
       // 使用AI增强的结果，只补充分类ID
       final result = OcrResult(
@@ -183,8 +185,11 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
       if (transactionId != null) {
         // 显示成功提示
         final l10n = AppLocalizations.of(context);
-        final transactionKind = (_ocrResult?.aiType == 'income') ? 'income' : 'expense';
-        final typeText = transactionKind == 'income' ? l10n.aiTypeIncome : l10n.aiTypeExpense;
+        final transactionKind =
+            (_ocrResult?.aiType == 'income') ? 'income' : 'expense';
+        final typeText = transactionKind == 'income'
+            ? l10n.aiTypeIncome
+            : l10n.aiTypeExpense;
         // 使用用户最终选择的金额而不是默认金额
         final finalAmount = amount.toStringAsFixed(2);
         showToast(context, l10n.aiOcrSuccess(typeText, finalAmount));
@@ -226,7 +231,8 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
     );
   }
 
-  Widget _buildImagePicker(BuildContext context, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildImagePicker(
+      BuildContext context, ThemeData theme, AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -314,7 +320,8 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
     );
   }
 
-  Widget _buildResult(BuildContext context, ThemeData theme, AppLocalizations l10n, Color primaryColor) {
+  Widget _buildResult(BuildContext context, ThemeData theme,
+      AppLocalizations l10n, Color primaryColor) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -369,7 +376,8 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
     );
   }
 
-  Widget _buildResultCard(BuildContext context, ThemeData theme, AppLocalizations l10n, Color primaryColor) {
+  Widget _buildResultCard(BuildContext context, ThemeData theme,
+      AppLocalizations l10n, Color primaryColor) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -439,7 +447,8 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
                 prefixText: '¥',
                 border: const OutlineInputBorder(),
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               onChanged: (value) {
                 setState(() {
                   _selectedAmount = value;
@@ -477,7 +486,8 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
                         Text(
                           l10n.ocrSuggestedCategory,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -540,7 +550,8 @@ class _OcrBillingPageState extends ConsumerState<OcrBillingPage> {
                 dividerColor: Colors.transparent,
                 expansionTileTheme: ExpansionTileThemeData(
                   iconColor: primaryColor,
-                  collapsedIconColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  collapsedIconColor:
+                      theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   textColor: primaryColor,
                   collapsedTextColor: theme.colorScheme.onSurface,
                 ),

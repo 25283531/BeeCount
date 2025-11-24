@@ -67,10 +67,10 @@
   "@searchBatchModeWithCount": {
     "placeholders": {
       "selected": {
-        "type": "int"
+        "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -81,7 +81,7 @@
   "@searchSelectedCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -92,7 +92,7 @@
   "@searchBatchDeleteConfirmMessage": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -101,7 +101,7 @@
   "@searchBatchSetNoteMessage": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -111,7 +111,7 @@
   "@searchBatchChangeCategoryMessage": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -120,7 +120,7 @@
   "@searchBatchDeleteSuccess": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -128,7 +128,7 @@
   "@searchBatchDeleteFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -136,7 +136,7 @@
   "@searchBatchSetNoteSuccess": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -144,7 +144,7 @@
   "@searchBatchSetNoteFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -152,7 +152,7 @@
   "@searchBatchChangeCategorySuccess": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -160,15 +160,15 @@
   "@searchBatchChangeCategoryFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
-  "searchResultsCount": "共 {count} 条结果",
+  "searchResultsCount": "共 {count} 条记录",
   "@searchResultsCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -206,7 +206,7 @@
   "@ledgersClearMessage": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -217,7 +217,7 @@
   "@ledgersDeleteLocalMessage": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1114,7 +1114,7 @@
   "@iosAutoImportFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1122,7 +1122,7 @@
   "@iosAutoOpenAppFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1454,5 +1454,7 @@
   "welcomeCategoryModeHierarchicalDescription": "精细管理，清晰明了",
   "welcomeCategoryModeHierarchicalFeature1": "支持父子分类层级",
   "welcomeCategoryModeHierarchicalFeature2": "更细致的账单归类",
-  "welcomeCategoryModeHierarchicalFeature3": "适合需要精细管理的用户"
+  "welcomeCategoryModeHierarchicalFeature3": "适合需要精细管理的用户",
+  "voiceBilling": "语音记账",
+  "voiceBillingDesc": "离线语音识别转文字并解析"
 }

@@ -4,7 +4,6 @@ import 'package:yaml/yaml.dart';
 import 'package:flutter_cloud_sync/flutter_cloud_sync.dart';
 import 'package:drift/drift.dart' as d;
 import '../data/db.dart';
-import '../providers.dart';
 import 'logger_service.dart';
 
 /// 应用配置模型
@@ -287,8 +286,8 @@ class RecurringTransactionsConfig {
     final itemsList = map['items'] as List<dynamic>? ?? [];
     return RecurringTransactionsConfig(
       items: itemsList
-          .map((item) =>
-              RecurringTransactionItem.fromMap(Map<String, dynamic>.from(item as Map)))
+          .map((item) => RecurringTransactionItem.fromMap(
+              Map<String, dynamic>.from(item as Map)))
           .toList(),
     );
   }
@@ -440,7 +439,10 @@ class ConfigExportService {
     final aiEnabled = prefs.getBool('ai_bill_extraction_enabled');
     final aiUseVision = prefs.getBool('ai_use_vision');
 
-    if (glmApiKey != null || aiStrategy != null || aiEnabled != null || aiUseVision != null) {
+    if (glmApiKey != null ||
+        aiStrategy != null ||
+        aiEnabled != null ||
+        aiUseVision != null) {
       aiConfig = AIConfig(
         glmApiKey: glmApiKey,
         strategy: aiStrategy,
@@ -461,7 +463,8 @@ class ConfigExportService {
     final fontScaleLevel = prefs.getInt('fontScaleLevel');
     final customFontScale = prefs.getDouble('customFontScale');
     final cloudServiceType = prefs.getString('selected_cloud_service');
-    final autoScreenshotEnabled = prefs.getBool('auto_screenshot_billing_enabled');
+    final autoScreenshotEnabled =
+        prefs.getBool('auto_screenshot_billing_enabled');
     final shortcutPreferCamera = prefs.getBool('shortcut_prefer_camera');
 
     // 如果有任何应用设置，就创建配置对象
@@ -574,7 +577,8 @@ class ConfigExportService {
 
       if (settings.containsKey('account_feature_enabled')) {
         buffer.writeln('  # 账户管理');
-        buffer.writeln('  account_feature_enabled: ${settings['account_feature_enabled']}');
+        buffer.writeln(
+            '  account_feature_enabled: ${settings['account_feature_enabled']}');
       }
 
       if (settings.containsKey('reminder_enabled') ||
@@ -592,7 +596,8 @@ class ConfigExportService {
         }
       }
 
-      if (settings.containsKey('language_code') || settings.containsKey('country_code')) {
+      if (settings.containsKey('language_code') ||
+          settings.containsKey('country_code')) {
         buffer.writeln('  # 语言设置');
         if (settings.containsKey('language_code')) {
           buffer.writeln('  language_code: "${settings['language_code']}"');
@@ -613,23 +618,27 @@ class ConfigExportService {
           buffer.writeln('  font_scale_level: ${settings['font_scale_level']}');
         }
         if (settings.containsKey('custom_font_scale')) {
-          buffer.writeln('  custom_font_scale: ${settings['custom_font_scale']}');
+          buffer
+              .writeln('  custom_font_scale: ${settings['custom_font_scale']}');
         }
       }
 
       if (settings.containsKey('cloud_service_type')) {
         buffer.writeln('  # 云服务');
-        buffer.writeln('  cloud_service_type: "${settings['cloud_service_type']}"');
+        buffer.writeln(
+            '  cloud_service_type: "${settings['cloud_service_type']}"');
       }
 
       if (settings.containsKey('auto_screenshot_enabled') ||
           settings.containsKey('shortcut_prefer_camera')) {
         buffer.writeln('  # 自动记账');
         if (settings.containsKey('auto_screenshot_enabled')) {
-          buffer.writeln('  auto_screenshot_enabled: ${settings['auto_screenshot_enabled']}');
+          buffer.writeln(
+              '  auto_screenshot_enabled: ${settings['auto_screenshot_enabled']}');
         }
         if (settings.containsKey('shortcut_prefer_camera')) {
-          buffer.writeln('  shortcut_prefer_camera: ${settings['shortcut_prefer_camera']}');
+          buffer.writeln(
+              '  shortcut_prefer_camera: ${settings['shortcut_prefer_camera']}');
         }
       }
     }
@@ -638,7 +647,8 @@ class ConfigExportService {
     if (yamlMap.containsKey('recurring_transactions')) {
       buffer.writeln('# 周期账单');
       buffer.writeln('recurring_transactions:');
-      final recurring = yamlMap['recurring_transactions'] as Map<String, dynamic>;
+      final recurring =
+          yamlMap['recurring_transactions'] as Map<String, dynamic>;
       final items = recurring['items'] as List;
 
       if (items.isNotEmpty) {
@@ -755,7 +765,8 @@ class ConfigExportService {
 
       // 账户管理
       if (settings.accountFeatureEnabled != null) {
-        await prefs.setBool('account_feature_enabled', settings.accountFeatureEnabled!);
+        await prefs.setBool(
+            'account_feature_enabled', settings.accountFeatureEnabled!);
       }
 
       // 记账提醒
@@ -774,7 +785,8 @@ class ConfigExportService {
         await prefs.setString('selected_language', settings.languageCode!);
       }
       if (settings.countryCode != null) {
-        await prefs.setString('selected_language_country', settings.countryCode!);
+        await prefs.setString(
+            'selected_language_country', settings.countryCode!);
       }
 
       // 个性化设置
@@ -790,22 +802,27 @@ class ConfigExportService {
 
       // 云服务
       if (settings.cloudServiceType != null) {
-        await prefs.setString('selected_cloud_service', settings.cloudServiceType!);
+        await prefs.setString(
+            'selected_cloud_service', settings.cloudServiceType!);
       }
 
       // 自动记账
       if (settings.autoScreenshotEnabled != null) {
-        await prefs.setBool('auto_screenshot_billing_enabled', settings.autoScreenshotEnabled!);
+        await prefs.setBool(
+            'auto_screenshot_billing_enabled', settings.autoScreenshotEnabled!);
       }
       if (settings.shortcutPreferCamera != null) {
-        await prefs.setBool('shortcut_prefer_camera', settings.shortcutPreferCamera!);
+        await prefs.setBool(
+            'shortcut_prefer_camera', settings.shortcutPreferCamera!);
       }
 
       logger.info('ConfigImport', '应用设置已导入');
     }
 
     // 导入周期账单
-    if (config.recurringTransactions != null && db != null && ledgerId != null) {
+    if (config.recurringTransactions != null &&
+        db != null &&
+        ledgerId != null) {
       try {
         final items = config.recurringTransactions!.items;
         int importedCount = 0;
@@ -813,25 +830,26 @@ class ConfigExportService {
         for (final item in items) {
           try {
             await db.into(db.recurringTransactions).insert(
-              RecurringTransactionsCompanion.insert(
-                ledgerId: ledgerId,
-                type: item.type,
-                amount: item.amount,
-                categoryId: d.Value(item.categoryId),
-                accountId: d.Value(item.accountId),
-                toAccountId: d.Value(item.toAccountId),
-                note: d.Value(item.note),
-                frequency: item.frequency,
-                interval: d.Value(item.interval),
-                dayOfMonth: d.Value(item.dayOfMonth),
-                dayOfWeek: d.Value(item.dayOfWeek),
-                monthOfYear: d.Value(item.monthOfYear),
-                startDate: DateTime.parse(item.startDate),
-                endDate: d.Value(
-                    item.endDate != null ? DateTime.parse(item.endDate!) : null),
-                enabled: d.Value(item.enabled),
-              ),
-            );
+                  RecurringTransactionsCompanion.insert(
+                    ledgerId: ledgerId,
+                    type: item.type,
+                    amount: item.amount,
+                    categoryId: d.Value(item.categoryId),
+                    accountId: d.Value(item.accountId),
+                    toAccountId: d.Value(item.toAccountId),
+                    note: d.Value(item.note),
+                    frequency: item.frequency,
+                    interval: d.Value(item.interval),
+                    dayOfMonth: d.Value(item.dayOfMonth),
+                    dayOfWeek: d.Value(item.dayOfWeek),
+                    monthOfYear: d.Value(item.monthOfYear),
+                    startDate: DateTime.parse(item.startDate),
+                    endDate: d.Value(item.endDate != null
+                        ? DateTime.parse(item.endDate!)
+                        : null),
+                    enabled: d.Value(item.enabled),
+                  ),
+                );
             importedCount++;
           } catch (e) {
             logger.warning('ConfigImport', '导入周期账单项失败: $e');

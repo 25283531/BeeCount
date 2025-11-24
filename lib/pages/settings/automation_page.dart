@@ -6,8 +6,8 @@ import '../../widgets/biz/biz.dart';
 import '../../styles/tokens.dart';
 import '../transaction/recurring_transaction_page.dart';
 import '../settings/reminder_settings_page.dart';
+import '../automation/voice_billing_page.dart';
 import '../../l10n/app_localizations.dart';
-import '../../utils/ui_scale_extensions.dart';
 
 /// 自动化功能二级页面
 class AutomationPage extends ConsumerWidget {
@@ -35,11 +35,15 @@ class AutomationPage extends ConsumerWidget {
                       // 周期记账
                       AppListTile(
                         leading: Icons.repeat,
-                        title: AppLocalizations.of(context).mineRecurringTransactions,
-                        subtitle: AppLocalizations.of(context).mineRecurringTransactionsSubtitle,
+                        title: AppLocalizations.of(context)
+                            .mineRecurringTransactions,
+                        subtitle: AppLocalizations.of(context)
+                            .mineRecurringTransactionsSubtitle,
                         onTap: () async {
                           await Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const RecurringTransactionPage()),
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    const RecurringTransactionPage()),
                           );
                         },
                       ),
@@ -47,11 +51,27 @@ class AutomationPage extends ConsumerWidget {
                       // 记账提醒
                       AppListTile(
                         leading: Icons.notifications_outlined,
-                        title: AppLocalizations.of(context).mineReminderSettings,
-                        subtitle: AppLocalizations.of(context).mineReminderSettingsSubtitle,
+                        title:
+                            AppLocalizations.of(context).mineReminderSettings,
+                        subtitle: AppLocalizations.of(context)
+                            .mineReminderSettingsSubtitle,
                         onTap: () async {
                           await Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const ReminderSettingsPage()),
+                            MaterialPageRoute(
+                                builder: (_) => const ReminderSettingsPage()),
+                          );
+                        },
+                      ),
+                      BeeTokens.cardDivider(context),
+                      // 语音记账
+                      AppListTile(
+                        leading: Icons.mic_outlined,
+                        title: '语音记账',
+                        subtitle: '通过语音快速记录账单',
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => const VoiceBillingPage()),
                           );
                         },
                       ),

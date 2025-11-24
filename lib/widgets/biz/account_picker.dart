@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers.dart';
 import '../../data/db.dart';
 import '../../l10n/app_localizations.dart';
-import '../ui/ui.dart';
 
 /// 账户选择器数据模型
 class AccountOption {
@@ -157,9 +156,9 @@ class _AccountPickerState extends ConsumerState<AccountPicker> {
     return allAccountsAsync.when(
       data: (allAccounts) {
         // v1.15.0: 只显示与当前账本同币种的账户
-        final accounts = allAccounts.where((account) =>
-          account.currency == currentCurrency
-        ).toList();
+        final accounts = allAccounts
+            .where((account) => account.currency == currentCurrency)
+            .toList();
 
         _buildOptions(accounts);
 

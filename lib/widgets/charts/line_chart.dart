@@ -115,7 +115,8 @@ class LineChart extends StatelessWidget {
                           size: 14, color: BeeTokens.textSecondary(context)),
                       const SizedBox(width: 4),
                       Text(
-                        hintText ?? AppLocalizations.of(context)!.analyticsSwipeHint,
+                        hintText ??
+                            AppLocalizations.of(context).analyticsSwipeHint,
                         style: Theme.of(context)
                             .textTheme
                             .labelSmall
@@ -247,7 +248,8 @@ class _LinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    final bgPaint = Paint()..color = whiteBg ? Colors.white : BeeTokens.dividerStatic;
+    final bgPaint = Paint()
+      ..color = whiteBg ? Colors.white : BeeTokens.dividerStatic;
     // 背景
     canvas.drawRRect(
         RRect.fromRectAndRadius(rect, Radius.circular(cornerRadius)), bgPaint);
@@ -419,8 +421,8 @@ class _LinePainter extends CustomPainter {
     // 所有非零点数值标注
     if (annotate) {
       // 主线标注
-      final textStyle =
-          TextStyle(fontSize: yLabelFontSize - 1, color: BeeTokens.primaryTextStatic);
+      final textStyle = TextStyle(
+          fontSize: yLabelFontSize - 1, color: BeeTokens.primaryTextStatic);
       for (final i in nzIndices) {
         final displayText = hideAmounts ? '**' : _fmt(values[i]);
         final tp = TextPainter(
@@ -463,8 +465,8 @@ class _LinePainter extends CustomPainter {
 
     // X 轴标签（保持原始标签与索引）
     if (xLabels.isNotEmpty) {
-      final baseStyle =
-          TextStyle(fontSize: xLabelFontSize, color: BeeTokens.secondaryTextStatic);
+      final baseStyle = TextStyle(
+          fontSize: xLabelFontSize, color: BeeTokens.secondaryTextStatic);
       final hiStyle = TextStyle(
           fontSize: xLabelFontSize,
           color: BeeTokens.primaryTextStatic,

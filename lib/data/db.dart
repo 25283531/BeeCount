@@ -3,7 +3,6 @@ import 'dart:ui' show Locale;
 
 import 'package:drift/drift.dart';
 import '../l10n/app_localizations.dart';
-import '../services/category_service.dart';
 import '../services/seed_service.dart';
 import '../services/logger_service.dart';
 import 'package:drift/native.dart';
@@ -246,7 +245,8 @@ class BeeDatabase extends _$BeeDatabase {
 
             // 4. 重命名新表
             print('[DB Migration] 步骤4: 重命名新表');
-            await customStatement('ALTER TABLE recurring_transactions_new RENAME TO recurring_transactions;');
+            await customStatement(
+                'ALTER TABLE recurring_transactions_new RENAME TO recurring_transactions;');
             print('[DB Migration] v7 迁移完成');
           }
         },

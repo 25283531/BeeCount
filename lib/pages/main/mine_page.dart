@@ -7,7 +7,6 @@ import '../data/import_page.dart';
 import '../data/export_page.dart';
 import '../settings/personalize_page.dart';
 import '../../providers.dart';
-import '../../providers/theme_providers.dart';
 import '../../widgets/ui/ui.dart';
 import '../../widgets/biz/biz.dart';
 import '../../styles/tokens.dart';
@@ -38,7 +37,6 @@ import '../settings/about_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:in_app_review/in_app_review.dart';
-import '../../services/update_service.dart';
 import '../../utils/ui_scale_extensions.dart';
 
 class MinePage extends ConsumerWidget {
@@ -230,9 +228,9 @@ class MinePage extends ConsumerWidget {
                                                     color: sectionRef.watch(
                                                         primaryColorProvider),
                                                     size: 20)
-                                                : Icon(
-                                                    Icons.chevron_right,
-                                                    color: BeeTokens.iconTertiary(context), // ⭐ 使用 Token
+                                                : Icon(Icons.chevron_right,
+                                                    color: BeeTokens.iconTertiary(
+                                                        context), // ⭐ 使用 Token
                                                     size: 20),
                                         onTap: () async {
                                           await Navigator.of(sectionContext)
@@ -267,7 +265,8 @@ class MinePage extends ConsumerWidget {
                         title: AppLocalizations.of(context).smartBilling,
                         subtitle: AppLocalizations.of(context).smartBillingDesc,
                         trailing: Icon(Icons.chevron_right,
-                            color: BeeTokens.iconTertiary(context), size: 20), // ⭐ 使用 Token
+                            color: BeeTokens.iconTertiary(context),
+                            size: 20), // ⭐ 使用 Token
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -283,7 +282,8 @@ class MinePage extends ConsumerWidget {
                         subtitle:
                             AppLocalizations.of(context).dataManagementDesc,
                         trailing: Icon(Icons.chevron_right,
-                            color: BeeTokens.iconTertiary(context), size: 20), // ⭐ 使用 Token
+                            color: BeeTokens.iconTertiary(context),
+                            size: 20), // ⭐ 使用 Token
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -299,7 +299,8 @@ class MinePage extends ConsumerWidget {
                         subtitle:
                             AppLocalizations.of(context).accountsManageDesc,
                         trailing: Icon(Icons.chevron_right,
-                            color: BeeTokens.iconTertiary(context), size: 20), // ⭐ 使用 Token
+                            color: BeeTokens.iconTertiary(context),
+                            size: 20), // ⭐ 使用 Token
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -314,7 +315,8 @@ class MinePage extends ConsumerWidget {
                         title: AppLocalizations.of(context).automation,
                         subtitle: AppLocalizations.of(context).automationDesc,
                         trailing: Icon(Icons.chevron_right,
-                            color: BeeTokens.iconTertiary(context), size: 20), // ⭐ 使用 Token
+                            color: BeeTokens.iconTertiary(context),
+                            size: 20), // ⭐ 使用 Token
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -330,7 +332,8 @@ class MinePage extends ConsumerWidget {
                         subtitle:
                             AppLocalizations.of(context).appearanceSettingsDesc,
                         trailing: Icon(Icons.chevron_right,
-                            color: BeeTokens.iconTertiary(context), size: 20), // ⭐ 使用 Token
+                            color: BeeTokens.iconTertiary(context),
+                            size: 20), // ⭐ 使用 Token
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -353,7 +356,8 @@ class MinePage extends ConsumerWidget {
                         title: AppLocalizations.of(context).about,
                         subtitle: AppLocalizations.of(context).aboutDesc,
                         trailing: Icon(Icons.chevron_right,
-                            color: BeeTokens.iconTertiary(context), size: 20), // ⭐ 使用 Token
+                            color: BeeTokens.iconTertiary(context),
+                            size: 20), // ⭐ 使用 Token
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -430,7 +434,8 @@ class MinePage extends ConsumerWidget {
                         AppListTile(
                           leading: Icons.star_border_rounded,
                           title: AppLocalizations.of(context).mineRateApp,
-                          subtitle: AppLocalizations.of(context).mineRateAppSubtitle,
+                          subtitle:
+                              AppLocalizations.of(context).mineRateAppSubtitle,
                           onTap: () => _rateApp(context),
                         ),
                       ],

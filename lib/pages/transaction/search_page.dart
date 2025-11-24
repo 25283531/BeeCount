@@ -351,7 +351,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     Text(l10n.searchBatchChangeCategoryMessage(count)),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<int>(
-                      value: selectedCategoryId,
+                      initialValue: selectedCategoryId,
                       decoration: InputDecoration(
                         labelText: l10n.searchBatchChangeCategoryLabel,
                         border: const OutlineInputBorder(),
@@ -491,13 +491,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
               decoration: BoxDecoration(
                 color: BeeTokens.surfaceElevated(context),
-                boxShadow: BeeTokens.isDark(context) ? null : [
-                  BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                boxShadow: BeeTokens.isDark(context)
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
               child: Column(
                 children: [
@@ -506,8 +508,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context).searchHint,
-                      prefixIcon:
-                          Icon(Icons.search, color: BeeTokens.textTertiary(context)),
+                      prefixIcon: Icon(Icons.search,
+                          color: BeeTokens.textTertiary(context)),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
                               onPressed: () {
@@ -656,7 +658,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         Text(
                           AppLocalizations.of(context).searchNoInput,
                           style: TextStyle(
-                              color: BeeTokens.textTertiary(context), fontSize: 16),
+                              color: BeeTokens.textTertiary(context),
+                              fontSize: 16),
                         ),
                       ],
                     ),
@@ -674,7 +677,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         Text(
                           AppLocalizations.of(context).searchNoResults,
                           style: TextStyle(
-                              color: BeeTokens.textTertiary(context), fontSize: 16),
+                              color: BeeTokens.textTertiary(context),
+                              fontSize: 16),
                         ),
                       ],
                     ),
@@ -776,7 +780,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                 const SizedBox(width: 6),
                                 Expanded(
                                   child: OutlinedButton.icon(
-                                    onPressed: _selectedIds.isEmpty || _hasTransferInSelection()
+                                    onPressed: _selectedIds.isEmpty ||
+                                            _hasTransferInSelection()
                                         ? null
                                         : _showBatchChangeCategoryDialog,
                                     icon: const Icon(Icons.category, size: 16),
@@ -825,7 +830,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           final isExpense = item.t.type == 'expense';
 
                           // 获取分类显示名称
-                          final categoryName = CategoryUtils.getDisplayName(item.category?.name, context);
+                          final categoryName = CategoryUtils.getDisplayName(
+                              item.category?.name, context);
 
                           final subtitle = item.t.note ?? '';
                           final isSelected = _selectedIds.contains(item.t.id);

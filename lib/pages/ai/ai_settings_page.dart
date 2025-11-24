@@ -54,7 +54,6 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
     });
   }
 
-
   Future<void> _openGlmWebsite() async {
     final uri = Uri.parse('https://open.bigmodel.cn/');
     if (await canLaunchUrl(uri)) {
@@ -140,7 +139,8 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
               await prefs.setBool('ai_bill_extraction_enabled', value);
 
               if (mounted) {
-                showToast(context, value ? l10n.aiEnableToastOn : l10n.aiEnableToastOff);
+                showToast(context,
+                    value ? l10n.aiEnableToastOn : l10n.aiEnableToastOff);
               }
             },
             title: Text(
@@ -148,27 +148,29 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             subtitle: Text(l10n.aiEnableSubtitle),
-            activeColor: ref.watch(primaryColorProvider),
+            activeThumbColor: ref.watch(primaryColorProvider),
           ),
 
           // 上传图片到AI开关
           BeeTokens.cardDivider(context),
           SwitchListTile(
             value: _useVision,
-            onChanged: _aiEnabled ? (value) async {
-              setState(() => _useVision = value);
+            onChanged: _aiEnabled
+                ? (value) async {
+                    setState(() => _useVision = value);
 
-              // 立即保存Vision开关状态
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('ai_use_vision', value);
+                    // 立即保存Vision开关状态
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('ai_use_vision', value);
 
-              if (mounted) {
-                showToast(
-                  context,
-                  value ? '已启用图片识别，识别准确率更高' : '已关闭图片识别，仅使用OCR文本',
-                );
-              }
-            } : null,
+                    if (mounted) {
+                      showToast(
+                        context,
+                        value ? '已启用图片识别，识别准确率更高' : '已关闭图片识别，仅使用OCR文本',
+                      );
+                    }
+                  }
+                : null,
             title: const Text(
               '上传图片到AI',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -178,7 +180,7 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
                   ? '使用GLM-4V-Flash视觉模型，识别更准确（免费）'
                   : '仅使用GLM-4.6文本模型分析OCR结果',
             ),
-            activeColor: ref.watch(primaryColorProvider),
+            activeThumbColor: ref.watch(primaryColorProvider),
           ),
         ],
       ),
@@ -257,17 +259,19 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
     return Opacity(
       opacity: enabled ? 1.0 : 0.5,
       child: InkWell(
-        onTap: enabled ? () async {
-          setState(() => _strategy = value);
+        onTap: enabled
+            ? () async {
+                setState(() => _strategy = value);
 
-          // 立即保存执行策略
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('ai_strategy', value);
+                // 立即保存执行策略
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setString('ai_strategy', value);
 
-          if (mounted) {
-            showToast(context, l10n.aiStrategySwitched(title));
-          }
-        } : null,
+                if (mounted) {
+                  showToast(context, l10n.aiStrategySwitched(title));
+                }
+              }
+            : null,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
@@ -289,7 +293,9 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
-                        color: enabled && isSelected ? ref.watch(primaryColorProvider) : BeeTokens.textPrimary(context),
+                        color: enabled && isSelected
+                            ? ref.watch(primaryColorProvider)
+                            : BeeTokens.textPrimary(context),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -297,8 +303,11 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
                       displaySubtitle,
                       style: TextStyle(
                         fontSize: 13,
-                        color: enabled ? BeeTokens.textSecondary(context) : Colors.orange[700],
-                        fontStyle: enabled ? FontStyle.normal : FontStyle.italic,
+                        color: enabled
+                            ? BeeTokens.textSecondary(context)
+                            : Colors.orange[700],
+                        fontStyle:
+                            enabled ? FontStyle.normal : FontStyle.italic,
                       ),
                     ),
                   ],
@@ -307,18 +316,20 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
               Radio<String>(
                 value: value,
                 groupValue: _strategy,
-                onChanged: enabled ? (v) async {
-                  if (v == null) return;
-                  setState(() => _strategy = v);
+                onChanged: enabled
+                    ? (v) async {
+                        if (v == null) return;
+                        setState(() => _strategy = v);
 
-                  // 立即保存执行策略
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setString('ai_strategy', v);
+                        // 立即保存执行策略
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('ai_strategy', v);
 
-                  if (mounted) {
-                    showToast(context, l10n.aiStrategySwitched(title));
-                  }
-                } : null,
+                        if (mounted) {
+                          showToast(context, l10n.aiStrategySwitched(title));
+                        }
+                      }
+                    : null,
                 activeColor: ref.watch(primaryColorProvider),
               ),
             ],
@@ -369,11 +380,14 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
                     prefixIcon: const Icon(Icons.vpn_key),
                     suffixIcon: _glmApiKey.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.check_circle, color: Colors.green),
+                            icon: const Icon(Icons.check_circle,
+                                color: Colors.green),
                             onPressed: () async {
                               // 手动保存
-                              final prefs = await SharedPreferences.getInstance();
-                              await prefs.setString('ai_glm_api_key', _glmApiKey);
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString(
+                                  'ai_glm_api_key', _glmApiKey);
                               if (mounted) {
                                 showToast(context, l10n.aiCloudApiKeySaved);
                               }
@@ -444,7 +458,8 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.orange[100],
                     borderRadius: BorderRadius.circular(4),
@@ -464,7 +479,8 @@ class _AISettingsPageState extends ConsumerState<AISettingsPage> {
           Opacity(
             opacity: 0.5,
             child: ListTile(
-              leading: Icon(Icons.download_outlined, color: BeeTokens.textTertiary(context)),
+              leading: Icon(Icons.download_outlined,
+                  color: BeeTokens.textTertiary(context)),
               title: Text(l10n.aiLocalModelManagement),
               subtitle: Text(l10n.aiLocalModelUnavailable),
               trailing: const Icon(Icons.chevron_right),

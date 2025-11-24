@@ -5,7 +5,7 @@ import 'dart:math' as Math;
 import '../../providers.dart';
 import '../../providers/theme_providers.dart';
 import '../../styles/tokens.dart';
-import '../../theme.dart'; // ⭐ 导入 BeeTheme
+// ⭐ 导入 BeeTheme
 
 class PrimaryHeader extends ConsumerWidget {
   final String title;
@@ -80,7 +80,8 @@ class PrimaryHeader extends ConsumerWidget {
       child: Material(
         color: Colors.transparent,
         child: Container(
-          decoration: decoration ?? BoxDecoration(color: headerBg), // ⭐ 根据设置决定背景色
+          decoration:
+              decoration ?? BoxDecoration(color: headerBg), // ⭐ 根据设置决定背景色
           child: Stack(
             children: [
               // ⭐ 暗黑模式下根据用户设置显示装饰图案（none 时不显示）
@@ -102,98 +103,108 @@ class PrimaryHeader extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                if (showTitleSection)
-                  Padding(
-                    padding: effectivePadding,
-                    child: Row(
-                      children: [
-                        if (showBack)
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: iconColor), // ⭐ 自适应颜色
-                            onPressed: () => Navigator.of(context).maybePop(),
-                          ),
-                        if (leadingIcon != null) ...[
-                          leadingPlain
-                              ? Icon(leadingIcon, color: iconColor)
-                              : Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(leadingIcon, color: iconColor),
-                                ),
-                          const SizedBox(width: 8),
-                        ],
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      title,
-                                      style: titleStyle.copyWith(color: textColor), // ⭐ 自适应颜色
-                                      overflow: TextOverflow.ellipsis,
+                    if (showTitleSection)
+                      Padding(
+                        padding: effectivePadding,
+                        child: Row(
+                          children: [
+                            if (showBack)
+                              IconButton(
+                                icon: Icon(Icons.arrow_back,
+                                    color: iconColor), // ⭐ 自适应颜色
+                                onPressed: () =>
+                                    Navigator.of(context).maybePop(),
+                              ),
+                            if (leadingIcon != null) ...[
+                              leadingPlain
+                                  ? Icon(leadingIcon, color: iconColor)
+                                  : Container(
+                                      width: 36,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Colors.white.withValues(alpha: 0.2),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child:
+                                          Icon(leadingIcon, color: iconColor),
                                     ),
+                              const SizedBox(width: 8),
+                            ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          title,
+                                          style: titleStyle.copyWith(
+                                              color: textColor), // ⭐ 自适应颜色
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      if (titleTrailing != null) ...[
+                                        const SizedBox(width: 6),
+                                        titleTrailing!,
+                                      ],
+                                    ],
                                   ),
-                                  if (titleTrailing != null) ...[
-                                    const SizedBox(width: 6),
-                                    titleTrailing!,
-                                  ],
+                                  if (subtitle != null)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            subtitle!,
+                                            style: subStyle.copyWith(
+                                              color: BeeTokens.textSecondary(
+                                                  context),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        if (subtitleTrailing != null) ...[
+                                          const SizedBox(width: 6),
+                                          subtitleTrailing!,
+                                        ]
+                                      ],
+                                    ),
                                 ],
                               ),
-                              if (subtitle != null)
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        subtitle!,
-                                        style: subStyle.copyWith(
-                                          color: BeeTokens.textSecondary(context),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    if (subtitleTrailing != null) ...[
-                                      const SizedBox(width: 6),
-                                      subtitleTrailing!,
-                                    ]
-                                  ],
-                                ),
+                            ),
+                            if (center != null) ...[
+                              const SizedBox(width: 6),
+                              DefaultTextStyle(
+                                style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium
+                                        ?.copyWith(
+                                          color: iconColor, // ⭐ 自适应颜色
+                                        ) ??
+                                    TextStyle(fontSize: 12, color: iconColor),
+                                child: center!,
+                              ),
                             ],
+                            if (actions != null) ...actions!,
+                          ],
+                        ),
+                      ),
+                    if (content != null)
+                      Padding(
+                        padding: effectivePadding,
+                        child: DefaultTextStyle(
+                          style: DefaultTextStyle.of(context).style.copyWith(
+                                color: textColor, // ⭐ 自适应颜色
+                              ),
+                          child: IconTheme(
+                            data: IconThemeData(color: iconColor), // ⭐ 自适应颜色
+                            child: content!,
                           ),
                         ),
-                        if (center != null) ...[
-                          const SizedBox(width: 6),
-                          DefaultTextStyle(
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: iconColor, // ⭐ 自适应颜色
-                            ) ?? TextStyle(fontSize: 12, color: iconColor),
-                            child: center!,
-                          ),
-                        ],
-                        if (actions != null) ...actions!,
-                      ],
-                    ),
-                  ),
-                if (content != null)
-                  Padding(
-                    padding: effectivePadding,
-                    child: DefaultTextStyle(
-                      style: DefaultTextStyle.of(context).style.copyWith(
-                        color: textColor, // ⭐ 自适应颜色
                       ),
-                      child: IconTheme(
-                        data: IconThemeData(color: iconColor), // ⭐ 自适应颜色
-                        child: content!,
-                      ),
-                    ),
-                  ),
                     if (bottom != null) bottom!,
                   ],
                 ),
@@ -399,7 +410,8 @@ class _ParticlePatternPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 
   /// 创建五角星路径
-  Path _createStarPath(double centerX, double centerY, double outerRadius, double innerRadius) {
+  Path _createStarPath(
+      double centerX, double centerY, double outerRadius, double innerRadius) {
     final path = Path();
     const points = 5;
     const angle = Math.pi / points;
@@ -449,7 +461,9 @@ class _DiagonalStripesPatternPainter extends CustomPainter {
 
     // 绘制从左上到右下的对角线
     // 第一组：较粗较明显
-    for (double i = -size.height; i < size.width + size.height; i += spacing * 3) {
+    for (double i = -size.height;
+        i < size.width + size.height;
+        i += spacing * 3) {
       canvas.drawLine(
         Offset(i, 0),
         Offset(i + size.height, size.height),
@@ -458,7 +472,9 @@ class _DiagonalStripesPatternPainter extends CustomPainter {
     }
 
     // 第二组：中等粗细
-    for (double i = -size.height + spacing; i < size.width + size.height; i += spacing * 3) {
+    for (double i = -size.height + spacing;
+        i < size.width + size.height;
+        i += spacing * 3) {
       canvas.drawLine(
         Offset(i, 0),
         Offset(i + size.height, size.height),
@@ -467,7 +483,9 @@ class _DiagonalStripesPatternPainter extends CustomPainter {
     }
 
     // 第三组：较细较淡
-    for (double i = -size.height + spacing * 2; i < size.width + size.height; i += spacing * 3) {
+    for (double i = -size.height + spacing * 2;
+        i < size.width + size.height;
+        i += spacing * 3) {
       canvas.drawLine(
         Offset(i, 0),
         Offset(i + size.height, size.height),
@@ -509,7 +527,8 @@ class _HoneycombPatternPainter extends CustomPainter {
 
         // 只绘制部分六边形（随机效果）
         final random = Math.Random((row * 1000 + col).hashCode);
-        if (random.nextDouble() > 0.3) { // 70% 显示
+        if (random.nextDouble() > 0.3) {
+          // 70% 显示
           _drawHexagon(canvas, Offset(x, y), hexSize, paint);
         }
       }
