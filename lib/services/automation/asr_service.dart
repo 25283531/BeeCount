@@ -106,10 +106,8 @@ class AsrService {
         try {
           if (result is Map<String, dynamic>) {
             final partialText = result['partial'];
-            if (partialText != null) {
-              _partialResultController.add(partialText.toString());
-            }
-          }
+            _partialResultController.add(partialText.toString());
+                    }
         } catch (e) {
           _errorController.add('处理部分识别结果时出错: $e');
         }
@@ -119,10 +117,8 @@ class AsrService {
         try {
           if (result is Map<String, dynamic>) {
             final fullText = result['text'];
-            if (fullText != null) {
-              _recognizedTextController.add(fullText.toString());
-            }
-          }
+            _recognizedTextController.add(fullText.toString());
+                    }
         } catch (e) {
           _errorController.add('处理识别结果时出错: $e');
         }
@@ -141,7 +137,7 @@ class AsrService {
       
     } catch (e) {
       _errorController.add('初始化Android语音服务失败: $e');
-      throw e;
+      rethrow;
     }
   }
   
@@ -155,10 +151,8 @@ class AsrService {
         try {
           if (result is Map<String, dynamic>) {
             final partialText = result['partial'];
-            if (partialText != null) {
-              _partialResultController.add(partialText.toString());
-            }
-          }
+            _partialResultController.add(partialText.toString());
+                    }
         } catch (e) {
           _errorController.add('处理iOS部分识别结果时出错: $e');
         }
@@ -168,10 +162,8 @@ class AsrService {
         try {
           if (result is Map<String, dynamic>) {
             final fullText = result['text'];
-            if (fullText != null) {
-              _recognizedTextController.add(fullText.toString());
-            }
-          }
+            _recognizedTextController.add(fullText.toString());
+                    }
         } catch (e) {
           _errorController.add('处理iOS识别结果时出错: $e');
         }
@@ -195,7 +187,7 @@ class AsrService {
       _errorController.add('iOS平台语音识别初始化完成');
     } catch (e) {
       _errorController.add('初始化iOS语音服务失败: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -337,8 +329,9 @@ class AsrService {
   
   // 格式化存储大小显示
   String formatStorageSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    else if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(2)} KB';
+    if (bytes < 1024) {
+      return '$bytes B';
+    } else if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(2)} KB';
     else if (bytes < 1024 * 1024 * 1024) return '${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB';
     else return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
   }
@@ -357,7 +350,7 @@ class AsrService {
       }
       
       if (_model != null) {
-        await _model!.dispose();
+        _model!.dispose();
         _model = null;
       }
       

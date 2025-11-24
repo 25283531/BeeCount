@@ -17,8 +17,7 @@ class RecurringTransactionPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ledgerId = ref.watch(currentLedgerIdProvider);
-    final recurringTransactionsAsync =
-        ref.watch(recurringTransactionsProvider(ledgerId));
+    final recurringTransactionsAsync = ref.watch(recurringTransactionsProvider(ledgerId));
 
     return Scaffold(
       body: Column(
@@ -53,21 +52,17 @@ class RecurringTransactionPage extends ConsumerWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          AppLocalizations.of(context)
-                              .recurringTransactionEmpty,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: BeeTokens.textSecondary(context),
-                                  ),
+                          AppLocalizations.of(context).recurringTransactionEmpty,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: BeeTokens.textSecondary(context),
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          AppLocalizations.of(context)
-                              .recurringTransactionEmptyHint,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: BeeTokens.textTertiary(context),
-                                  ),
+                          AppLocalizations.of(context).recurringTransactionEmptyHint,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: BeeTokens.textTertiary(context),
+                          ),
                         ),
                       ],
                     ),
@@ -117,8 +112,7 @@ class _RecurringTransactionCard extends ConsumerWidget {
         onTap: () async {
           await Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) =>
-                  RecurringTransactionEditPage(recurring: recurring),
+              builder: (_) => RecurringTransactionEditPage(recurring: recurring),
             ),
           );
           // Refresh the list
@@ -146,9 +140,7 @@ class _RecurringTransactionCard extends ConsumerWidget {
                       recurring.type == 'expense'
                           ? Icons.arrow_upward
                           : Icons.arrow_downward,
-                      color: recurring.type == 'expense'
-                          ? BeeTokens.error(context)
-                          : BeeTokens.success(context),
+                      color: recurring.type == 'expense' ? BeeTokens.error(context) : BeeTokens.success(context),
                       size: 20,
                     ),
                   ),
@@ -167,23 +159,19 @@ class _RecurringTransactionCard extends ConsumerWidget {
                             : FutureBuilder<Category?>(
                                 future: _getCategory(ref, recurring.categoryId),
                                 builder: (context, snapshot) {
-                                  final categoryName =
-                                      snapshot.data?.name ?? '';
+                                  final categoryName = snapshot.data?.name ?? '';
                                   return Text(
-                                    CategoryUtils.getDisplayName(
-                                        categoryName, context),
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                    CategoryUtils.getDisplayName(categoryName, context),
+                                    style: Theme.of(context).textTheme.titleMedium,
                                   );
                                 },
                               ),
                         const SizedBox(height: 4),
                         Text(
                           _getFrequencyDescription(context, service),
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: BeeTokens.textSecondary(context),
-                                  ),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: BeeTokens.textSecondary(context),
+                          ),
                         ),
                       ],
                     ),
@@ -193,41 +181,30 @@ class _RecurringTransactionCard extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       AmountText(
-                        value: recurring.type == 'expense'
-                            ? -recurring.amount
-                            : recurring.amount,
+                        value: recurring.type == 'expense' ? -recurring.amount : recurring.amount,
                         signed: true,
                         decimals: 2,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: recurring.type == 'expense'
-                                  ? BeeTokens.error(context)
-                                  : BeeTokens.success(context),
-                              fontWeight: FontWeight.bold,
-                            ),
+                          color: recurring.type == 'expense' ? BeeTokens.error(context) : BeeTokens.success(context),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: recurring.enabled
-                              ? BeeTokens.success(context)
-                                  .withValues(alpha: 0.1)
-                              : BeeTokens.textTertiary(context)
-                                  .withValues(alpha: 0.1),
+                              ? BeeTokens.success(context).withValues(alpha: 0.1)
+                              : BeeTokens.textTertiary(context).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           recurring.enabled
-                              ? AppLocalizations.of(context)
-                                  .recurringTransactionEnabled
-                              : AppLocalizations.of(context)
-                                  .recurringTransactionDisabled,
+                              ? AppLocalizations.of(context).recurringTransactionEnabled
+                              : AppLocalizations.of(context).recurringTransactionDisabled,
                           style: TextStyle(
                             fontSize: 10,
-                            color: recurring.enabled
-                                ? BeeTokens.success(context)
-                                : BeeTokens.textSecondary(context),
+                            color: recurring.enabled ? BeeTokens.success(context) : BeeTokens.textSecondary(context),
                           ),
                         ),
                       ),
@@ -240,29 +217,28 @@ class _RecurringTransactionCard extends ConsumerWidget {
                 Text(
                   recurring.note!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: BeeTokens.textSecondary(context),
-                      ),
+                    color: BeeTokens.textSecondary(context),
+                  ),
                 ),
               ],
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Icon(Icons.calendar_today,
-                      size: 14, color: BeeTokens.textSecondary(context)),
+                  Icon(Icons.calendar_today, size: 14, color: BeeTokens.textSecondary(context)),
                   const SizedBox(width: 4),
                   Text(
                     '${AppLocalizations.of(context).recurringTransactionStartDate}: ${DateFormat.yMd().format(recurring.startDate)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: BeeTokens.textSecondary(context),
-                        ),
+                      color: BeeTokens.textSecondary(context),
+                    ),
                   ),
                   if (recurring.endDate != null) ...[
                     const SizedBox(width: 12),
                     Text(
                       '→ ${DateFormat.yMd().format(recurring.endDate!)}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: BeeTokens.textSecondary(context),
-                          ),
+                        color: BeeTokens.textSecondary(context),
+                      ),
                     ),
                   ],
                 ],
@@ -271,14 +247,13 @@ class _RecurringTransactionCard extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.history,
-                        size: 14, color: BeeTokens.textSecondary(context)),
+                    Icon(Icons.history, size: 14, color: BeeTokens.textSecondary(context)),
                     const SizedBox(width: 4),
                     Text(
                       '${AppLocalizations.of(context).recurringTransactionNextGeneration}: ${DateFormat.yMd().format(recurring.lastGeneratedDate!)}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: BeeTokens.textSecondary(context),
-                          ),
+                        color: BeeTokens.textSecondary(context),
+                      ),
                     ),
                   ],
                 ),
@@ -290,8 +265,7 @@ class _RecurringTransactionCard extends ConsumerWidget {
     );
   }
 
-  String _getFrequencyDescription(
-      BuildContext context, RecurringTransactionService service) {
+  String _getFrequencyDescription(BuildContext context, RecurringTransactionService service) {
     final l10n = AppLocalizations.of(context);
     final frequency = RecurringFrequency.fromString(recurring.frequency);
     final interval = recurring.interval;

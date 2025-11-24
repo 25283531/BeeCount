@@ -6,7 +6,6 @@ import '../../providers.dart';
 import '../../widgets/ui/ui.dart';
 import '../../data/db.dart' as schema;
 import '../../l10n/app_localizations.dart';
-import '../../services/category_service.dart';
 import '../../services/import/csv_parser.dart';
 import '../../utils/category_utils.dart';
 import '../../services/import/bill_parser.dart';
@@ -42,9 +41,9 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
     'type': null,
     'amount': null,
     'category': null,
-    'sub_category': null, // 二级分类
-    'category_icon': null, // 分类图标
-    'sub_category_icon': null, // 二级分类图标
+    'sub_category': null,       // 二级分类
+    'category_icon': null,       // 分类图标
+    'sub_category_icon': null,   // 二级分类图标
     'account': null,
     'from_account': null,
     'to_account': null,
@@ -173,32 +172,18 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
                           'amount', items()),
                       _mapRow(AppLocalizations.of(context).importFieldCategory,
                           'category', items()),
-                      _mapRow(
-                          AppLocalizations.of(context)
-                              .exportCsvHeaderSubCategory,
-                          'sub_category',
-                          items()),
-                      _mapRow(
-                          AppLocalizations.of(context)
-                              .exportCsvHeaderCategoryIcon,
-                          'category_icon',
-                          items()),
-                      _mapRow(
-                          AppLocalizations.of(context)
-                              .exportCsvHeaderSubCategoryIcon,
-                          'sub_category_icon',
-                          items()),
+                      _mapRow(AppLocalizations.of(context).exportCsvHeaderSubCategory,
+                          'sub_category', items()),
+                      _mapRow(AppLocalizations.of(context).exportCsvHeaderCategoryIcon,
+                          'category_icon', items()),
+                      _mapRow(AppLocalizations.of(context).exportCsvHeaderSubCategoryIcon,
+                          'sub_category_icon', items()),
                       _mapRow(AppLocalizations.of(context).importFieldAccount,
                           'account', items()),
-                      _mapRow(
-                          AppLocalizations.of(context)
-                              .exportCsvHeaderFromAccount,
-                          'from_account',
-                          items()),
-                      _mapRow(
-                          AppLocalizations.of(context).exportCsvHeaderToAccount,
-                          'to_account',
-                          items()),
+                      _mapRow(AppLocalizations.of(context).exportCsvHeaderFromAccount,
+                          'from_account', items()),
+                      _mapRow(AppLocalizations.of(context).exportCsvHeaderToAccount,
+                          'to_account', items()),
                       _mapRow(AppLocalizations.of(context).importFieldNote,
                           'note', items()),
                     ],
@@ -244,9 +229,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall
-                                      ?.copyWith(
-                                          color:
-                                              BeeTokens.textTertiary(context)),
+                                      ?.copyWith(color: BeeTokens.textTertiary(context)),
                                 ),
                               ),
                           ],
@@ -256,8 +239,8 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
                   ),
                 ] else ...[
                   if (mapping['category'] == null)
-                    Text(
-                        AppLocalizations.of(context).importCategoryNotSelected),
+                    Text(AppLocalizations.of(context)
+                        .importCategoryNotSelected),
                   Text(AppLocalizations.of(context)
                       .importCategoryMappingDescription),
                   const SizedBox(height: 8),
@@ -336,7 +319,8 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
               child: Row(
                 children: [
                   if (importing)
-                    Text(AppLocalizations.of(context).importProgress(ok, fail)),
+                    Text(
+                        AppLocalizations.of(context).importProgress(ok, fail)),
                   const Spacer(),
                   if (step == 0)
                     FilledButton(
@@ -345,8 +329,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
                         // 如果没有分类列，说明可能只有转账记录，跳过分类映射步骤，直接开始导入
                         if (mapping['category'] == null) {
                           // 如果没有分类列但有转账相关列，则直接开始导入
-                          if (mapping['from_account'] != null ||
-                              mapping['to_account'] != null) {
+                          if (mapping['from_account'] != null || mapping['to_account'] != null) {
                             _startImport();
                           } else {
                             showToast(
@@ -365,8 +348,8 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
                     OutlinedButton(
                       onPressed:
                           importing ? null : () => setState(() => step = 0),
-                      child:
-                          Text(AppLocalizations.of(context).importPreviousStep),
+                      child: Text(
+                          AppLocalizations.of(context).importPreviousStep),
                     ),
                     const SizedBox(width: 12),
                     FilledButton(
@@ -472,10 +455,8 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
                   // 返回到数据管理页面继续后台导入
                   if (mounted) {
                     // Pop回DataManagementPage: ImportConfirmPage -> ImportPage
-                    Navigator.of(currentContext)
-                        .pop(); // Close ImportConfirmPage
-                    Navigator.of(currentContext)
-                        .pop(); // Close ImportPage, back to DataManagementPage
+                    Navigator.of(currentContext).pop(); // Close ImportConfirmPage
+                    Navigator.of(currentContext).pop(); // Close ImportPage, back to DataManagementPage
                   }
                 },
                 child:
@@ -585,8 +566,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
 
         // 步骤2：批量创建分类
         // 收集所有需要创建的分类信息（一级和二级）
-        final Map<String, ({String kind, String? icon, String? parentName})>
-            categoriesToCreate = {};
+        final Map<String, ({String kind, String? icon, String? parentName})> categoriesToCreate = {};
 
         for (int i = dataStart; i < rows.length; i++) {
           if (_cancelled) break;
@@ -605,22 +585,12 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
             final typeStr = typeRaw.trim().toLowerCase();
 
             String? type;
-            if (typeStr == '收入' ||
-                typeStr == '收' ||
-                typeStr == '入账' ||
-                typeStr == '进账' ||
-                typeStr == 'income' ||
-                typeStr == 'revenue' ||
-                typeStr == 'earning') {
+            if (typeStr == '收入' || typeStr == '收' || typeStr == '入账' || typeStr == '进账' ||
+                typeStr == 'income' || typeStr == 'revenue' || typeStr == 'earning') {
               type = 'income';
-            } else if (typeStr == '支出' ||
-                typeStr == '支' ||
-                typeStr == '出账' ||
-                typeStr == '消费' ||
-                typeStr == '花费' ||
-                typeStr == 'expense' ||
-                typeStr == 'spending' ||
-                typeStr == 'expenditure') {
+            } else if (typeStr == '支出' || typeStr == '支' || typeStr == '出账' ||
+                       typeStr == '消费' || typeStr == '花费' ||
+                       typeStr == 'expense' || typeStr == 'spending' || typeStr == 'expenditure') {
               type = 'expense';
             } else if (typeStr == '转账' || typeStr == 'transfer') {
               continue; // 转账没有分类
@@ -669,8 +639,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
         }
 
         // 批量创建分类（先创建一级，再创建二级）
-        final Map<String, int> categoryCache =
-            {}; // (name:kind) -> id 或 (name:kind:parent) -> id
+        final Map<String, int> categoryCache = {}; // (name:kind) -> id 或 (name:kind:parent) -> id
 
         // 第一遍：创建所有一级分类
         for (final entry in categoriesToCreate.entries) {
@@ -686,10 +655,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
             try {
               // 检查是否已存在
               final existing = await (repo.db.select(repo.db.categories)
-                    ..where((c) =>
-                        c.name.equals(name) &
-                        c.kind.equals(kind) &
-                        c.level.equals(1)))
+                    ..where((c) => c.name.equals(name) & c.kind.equals(kind) & c.level.equals(1)))
                   .getSingleOrNull();
 
               if (existing != null) {
@@ -697,13 +663,13 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
               } else {
                 // 创建新的一级分类
                 final id = await repo.db.into(repo.db.categories).insert(
-                      schema.CategoriesCompanion.insert(
-                        name: name,
-                        kind: kind,
-                        level: const d.Value(1),
-                        icon: d.Value(info.icon),
-                      ),
-                    );
+                  schema.CategoriesCompanion.insert(
+                    name: name,
+                    kind: kind,
+                    level: const d.Value(1),
+                    icon: d.Value(info.icon),
+                  ),
+                );
                 categoryCache[key] = id;
               }
             } catch (e) {
@@ -737,10 +703,10 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
               // 检查是否已存在
               final existing = await (repo.db.select(repo.db.categories)
                     ..where((c) =>
-                        c.name.equals(name) &
-                        c.kind.equals(kind) &
-                        c.level.equals(2) &
-                        c.parentId.equals(parentId)))
+                      c.name.equals(name) &
+                      c.kind.equals(kind) &
+                      c.level.equals(2) &
+                      c.parentId.equals(parentId)))
                   .getSingleOrNull();
 
               if (existing != null) {
@@ -748,14 +714,14 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
               } else {
                 // 创建新的二级分类
                 final id = await repo.db.into(repo.db.categories).insert(
-                      schema.CategoriesCompanion.insert(
-                        name: name,
-                        kind: kind,
-                        level: const d.Value(2),
-                        parentId: d.Value(parentId),
-                        icon: d.Value(info.icon),
-                      ),
-                    );
+                  schema.CategoriesCompanion.insert(
+                    name: name,
+                    kind: kind,
+                    level: const d.Value(2),
+                    parentId: d.Value(parentId),
+                    icon: d.Value(info.icon),
+                  ),
+                );
                 categoryCache[key] = id;
               }
             } catch (e) {
@@ -793,200 +759,172 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
             // 批次完成后更新一次进度
             container.read(importProgressProvider.notifier).state =
                 ImportProgress(
-                    running: true,
-                    total: total,
-                    done: done,
-                    ok: ok,
-                    fail: fail);
+                    running: true, total: total, done: done, ok: ok, fail: fail);
             await Future<void>.delayed(Duration.zero);
             if (mounted) setState(() {});
           }
         }
 
-        for (int i = dataStart; i < rows.length; i++) {
-          if (_cancelled) break;
-          final r = rows[i];
-          try {
-            String? getBy(String key, int fallback) {
-              final userIdx = mapping[key];
-              if (userIdx != null && userIdx >= 0 && userIdx < r.length) {
-                return r[userIdx].toString();
-              }
-              return fallback < r.length ? r[fallback].toString() : null;
-            }
+    for (int i = dataStart; i < rows.length; i++) {
+      if (_cancelled) break;
+      final r = rows[i];
+      try {
+        String? getBy(String key, int fallback) {
+          final userIdx = mapping[key];
+          if (userIdx != null && userIdx >= 0 && userIdx < r.length) {
+            return r[userIdx].toString();
+          }
+          return fallback < r.length ? r[fallback].toString() : null;
+        }
 
-            final dateStr = getBy('date', 0);
-            var typeRaw = getBy('type', 1) ?? 'expense';
-            final amountStr = getBy('amount', 2);
-            final categoryName = getBy('category', 3);
-            final subCategoryName = getBy('sub_category', 999);
-            final accountName =
-                getBy('account', 999); // 使用不存在的fallback，确保只从映射列获取
-            final fromAccountName = getBy('from_account', 999); // 转出账户
-            final toAccountName = getBy('to_account', 999); // 转入账户
-            final note = getBy('note', 4);
+        final dateStr = getBy('date', 0);
+        var typeRaw = getBy('type', 1) ?? 'expense';
+        final amountStr = getBy('amount', 2);
+        final categoryName = getBy('category', 3);
+        final subCategoryName = getBy('sub_category', 999);
+        final accountName = getBy('account', 999); // 使用不存在的fallback，确保只从映射列获取
+        final fromAccountName = getBy('from_account', 999); // 转出账户
+        final toAccountName = getBy('to_account', 999); // 转入账户
+        final note = getBy('note', 4);
 
-            // 类型识别：精准匹配收入/支出/转账，其他类型跳过
-            final typeStr = typeRaw.trim();
-            final lower = typeStr.toLowerCase();
+        // 类型识别：精准匹配收入/支出/转账，其他类型跳过
+        final typeStr = typeRaw.trim();
+        final lower = typeStr.toLowerCase();
 
-            String? type;
+        String? type;
 
-            // 精准匹配收入
-            if (lower == '收入' ||
-                lower == '收' ||
-                lower == '入账' ||
-                lower == '进账' ||
-                lower == 'income' ||
-                lower == 'revenue' ||
-                lower == 'earning') {
-              type = 'income';
-            }
-            // 精准匹配支出
-            else if (lower == '支出' ||
-                lower == '支' ||
-                lower == '出账' ||
-                lower == '消费' ||
-                lower == '花费' ||
-                lower == 'expense' ||
-                lower == 'spending' ||
-                lower == 'expenditure') {
-              type = 'expense';
-            }
-            // 精准匹配转账
-            else if (lower == '转账' || lower == 'transfer') {
-              type = 'transfer';
-            }
-            // 未识别的类型：跳过（债务等非收支记录）
-            else {
-              skipped++;
-              skippedTypes[typeStr] = (skippedTypes[typeStr] ?? 0) + 1;
-              continue;
-            }
+        // 精准匹配收入
+        if (lower == '收入' || lower == '收' || lower == '入账' || lower == '进账' ||
+            lower == 'income' || lower == 'revenue' || lower == 'earning') {
+          type = 'income';
+        }
+        // 精准匹配支出
+        else if (lower == '支出' || lower == '支' || lower == '出账' ||
+                 lower == '消费' || lower == '花费' ||
+                 lower == 'expense' || lower == 'spending' || lower == 'expenditure') {
+          type = 'expense';
+        }
+        // 精准匹配转账
+        else if (lower == '转账' || lower == 'transfer') {
+          type = 'transfer';
+        }
+        // 未识别的类型：跳过（债务等非收支记录）
+        else {
+          skipped++;
+          skippedTypes[typeStr] = (skippedTypes[typeStr] ?? 0) + 1;
+          continue;
+        }
 
-            // 金额解析（过滤正负号，统一使用绝对值）
-            final amountClean = (amountStr ?? '0')
-                .toString()
-                .replaceAll(RegExp(r'[¥$,+-]'), '');
-            final amount = double.parse(amountClean).abs();
+        // 金额解析（过滤正负号，统一使用绝对值）
+        final amountClean =
+            (amountStr ?? '0').toString().replaceAll(RegExp(r'[¥$,+-]'), '');
+        final amount = double.parse(amountClean).abs();
 
-            // 日期解析 - 使用通用日期解析工具
-            final date = DateParser.parse(dateStr);
+        // 日期解析 - 使用通用日期解析工具
+        final date = DateParser.parse(dateStr);
 
-            int? categoryId;
-            // 优先使用二级分类，如果没有则使用一级分类
-            if (subCategoryName != null &&
-                subCategoryName.trim().isNotEmpty &&
-                categoryName != null &&
-                categoryName.trim().isNotEmpty) {
-              // 有二级分类：从缓存中查找
-              final key =
-                  '${subCategoryName.trim()}:$type:${categoryName.trim()}';
-              categoryId = categoryCache[key];
-            } else if (categoryName != null && categoryName.trim().isNotEmpty) {
-              // 只有一级分类
-              final originalName = categoryName.trim();
-              final chosen = categoryMapping[originalName];
-              if (chosen != null) {
-                categoryId = chosen;
+        int? categoryId;
+        // 优先使用二级分类，如果没有则使用一级分类
+        if (subCategoryName != null && subCategoryName.trim().isNotEmpty &&
+            categoryName != null && categoryName.trim().isNotEmpty) {
+          // 有二级分类：从缓存中查找
+          final key = '${subCategoryName.trim()}:$type:${categoryName.trim()}';
+          categoryId = categoryCache[key];
+        } else if (categoryName != null && categoryName.trim().isNotEmpty) {
+          // 只有一级分类
+          final originalName = categoryName.trim();
+          final chosen = categoryMapping[originalName];
+          if (chosen != null) {
+            categoryId = chosen;
+          } else {
+            // 先从缓存查找
+            final key = '$originalName:$type';
+            categoryId = categoryCache[key];
+
+            if (categoryId == null) {
+              // 缓存中没有，使用原有的 upsertCategory 逻辑
+              final name = originalName;
+
+              if (type == 'income') {
+                final cached = incomeCatCache[name];
+                if (cached != null) {
+                  categoryId = cached;
+                } else {
+                  final id = await repo.upsertCategory(name: name, kind: 'income');
+                  incomeCatCache[name] = id;
+                  categoryId = id;
+                }
               } else {
-                // 先从缓存查找
-                final key = '$originalName:$type';
-                categoryId = categoryCache[key];
-
-                if (categoryId == null) {
-                  // 缓存中没有，使用原有的 upsertCategory 逻辑
-                  final name = originalName;
-
-                  if (type == 'income') {
-                    final cached = incomeCatCache[name];
-                    if (cached != null) {
-                      categoryId = cached;
-                    } else {
-                      final id =
-                          await repo.upsertCategory(name: name, kind: 'income');
-                      incomeCatCache[name] = id;
-                      categoryId = id;
-                    }
-                  } else {
-                    final cached = expenseCatCache[name];
-                    if (cached != null) {
-                      categoryId = cached;
-                    } else {
-                      final id = await repo.upsertCategory(
-                          name: name, kind: 'expense');
-                      expenseCatCache[name] = id;
-                      categoryId = id;
-                    }
-                  }
+                final cached = expenseCatCache[name];
+                if (cached != null) {
+                  categoryId = cached;
+                } else {
+                  final id = await repo.upsertCategory(name: name, kind: 'expense');
+                  expenseCatCache[name] = id;
+                  categoryId = id;
                 }
               }
             }
-
-            // 处理账户ID和转账逻辑
-            int? accountId;
-            int? toAccountId;
-
-            if (type == 'transfer') {
-              // 转账类型：使用 from_account 和 to_account
-              if (fromAccountName != null &&
-                  fromAccountName.trim().isNotEmpty) {
-                accountId = accountNameToId[fromAccountName.trim()];
-              }
-              if (toAccountName != null && toAccountName.trim().isNotEmpty) {
-                toAccountId = accountNameToId[toAccountName.trim()];
-              }
-
-              // 转账必须有转出和转入账户，否则跳过此记录
-              if (accountId == null || toAccountId == null) {
-                fail++;
-                continue;
-              }
-            } else {
-              // 收入或支出：使用普通 account 字段
-              if (accountName != null && accountName.trim().isNotEmpty) {
-                accountId = accountNameToId[accountName.trim()];
-              }
-              toAccountId = null;
-            }
-
-            // 构造行
-            final item = schema.TransactionsCompanion.insert(
-              ledgerId: ledgerId,
-              type: type,
-              amount: amount,
-              categoryId:
-                  d.Value(type == 'transfer' ? null : categoryId), // 转账没有分类
-              accountId: d.Value(accountId),
-              toAccountId: d.Value(toAccountId),
-              happenedAt: d.Value(date),
-              note: d.Value(note),
-            );
-            batch.add(item);
-          } catch (_) {
-            fail++;
-          }
-          done++;
-
-          // 达到批量阈值则落库一次
-          if (batch.length >= batchSize) {
-            await flushBatch();
-            // 当文件巨大时，主动让出一帧，避免 UI 卡顿
-            await Future<void>.delayed(Duration.zero);
-          }
-          // 降低频率的进度更新（不依赖落库）
-          if (done % 50 == 0 || done == total || _cancelled) {
-            container.read(importProgressProvider.notifier).state =
-                ImportProgress(
-                    running: true,
-                    total: total,
-                    done: done,
-                    ok: ok,
-                    fail: fail);
-            await Future<void>.delayed(Duration.zero);
-            if (mounted) setState(() {});
           }
         }
+
+        // 处理账户ID和转账逻辑
+        int? accountId;
+        int? toAccountId;
+
+        if (type == 'transfer') {
+          // 转账类型：使用 from_account 和 to_account
+          if (fromAccountName != null && fromAccountName.trim().isNotEmpty) {
+            accountId = accountNameToId[fromAccountName.trim()];
+          }
+          if (toAccountName != null && toAccountName.trim().isNotEmpty) {
+            toAccountId = accountNameToId[toAccountName.trim()];
+          }
+
+          // 转账必须有转出和转入账户，否则跳过此记录
+          if (accountId == null || toAccountId == null) {
+            fail++;
+            continue;
+          }
+        } else {
+          // 收入或支出：使用普通 account 字段
+          if (accountName != null && accountName.trim().isNotEmpty) {
+            accountId = accountNameToId[accountName.trim()];
+          }
+          toAccountId = null;
+        }
+
+        // 构造行
+        final item = schema.TransactionsCompanion.insert(
+          ledgerId: ledgerId,
+          type: type,
+          amount: amount,
+          categoryId: d.Value(type == 'transfer' ? null : categoryId), // 转账没有分类
+          accountId: d.Value(accountId),
+          toAccountId: d.Value(toAccountId),
+          happenedAt: d.Value(date),
+          note: d.Value(note),
+        );
+        batch.add(item);
+      } catch (_) {
+        fail++;
+      }
+      done++;
+
+      // 达到批量阈值则落库一次
+      if (batch.length >= batchSize) {
+        await flushBatch();
+        // 当文件巨大时，主动让出一帧，避免 UI 卡顿
+        await Future<void>.delayed(Duration.zero);
+      }
+      // 降低频率的进度更新（不依赖落库）
+      if (done % 50 == 0 || done == total || _cancelled) {
+        container.read(importProgressProvider.notifier).state = ImportProgress(
+            running: true, total: total, done: done, ok: ok, fail: fail);
+        await Future<void>.delayed(Duration.zero);
+        if (mounted) setState(() {});
+      }
+    }
 
         // 刷新剩余缓冲
         await flushBatch();
@@ -994,8 +932,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
     } catch (e) {
       // 事务失败，全部回滚
       if (mounted) {
-        showToast(context,
-            AppLocalizations.of(context).importTransactionFailed('$e'));
+        showToast(context, AppLocalizations.of(context).importTransactionFailed('$e'));
       }
       fail = total - ok; // 更新失败数
     }
@@ -1048,10 +985,10 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
 
     if (hasSkipped) {
       // 构建跳过类型列表
-      final skippedList =
-          skippedTypes.entries.map((e) => '${e.key}(${e.value})').join('、');
-      message +=
-          '\n${l10nToast.importSkippedNonTransactionTypes(skipped)}\n$skippedList';
+      final skippedList = skippedTypes.entries
+          .map((e) => '${e.key}(${e.value})')
+          .join('、');
+      message += '\n${l10nToast.importSkippedNonTransactionTypes(skipped)}\n$skippedList';
     }
 
     // Handle UI operations before cloud upload
@@ -1066,8 +1003,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
       // 关闭确认页 -> 返回到数据管理页面
       // Pop回DataManagementPage: ImportConfirmPage -> ImportPage
       Navigator.of(currentContext).pop(); // Close ImportConfirmPage
-      Navigator.of(currentContext)
-          .pop(); // Close ImportPage, back to DataManagementPage
+      Navigator.of(currentContext).pop(); // Close ImportPage, back to DataManagementPage
     } else {
       // 有失败或跳过: 使用弹窗显示详细信息,等待用户确认后再关闭页面
       await showDialog(
@@ -1086,8 +1022,7 @@ class _ImportConfirmPageState extends ConsumerState<ImportConfirmPage> {
 
       // 用户确认后再关闭页面
       Navigator.of(currentContext).pop(); // Close ImportConfirmPage
-      Navigator.of(currentContext)
-          .pop(); // Close ImportPage, back to DataManagementPage
+      Navigator.of(currentContext).pop(); // Close ImportPage, back to DataManagementPage
     }
     // 返回后再显式刷新一次全局统计，确保顶部汇总即时更新
     try {

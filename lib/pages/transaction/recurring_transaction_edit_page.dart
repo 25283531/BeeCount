@@ -16,12 +16,10 @@ class RecurringTransactionEditPage extends ConsumerStatefulWidget {
   const RecurringTransactionEditPage({super.key, this.recurring});
 
   @override
-  ConsumerState<RecurringTransactionEditPage> createState() =>
-      _RecurringTransactionEditPageState();
+  ConsumerState<RecurringTransactionEditPage> createState() => _RecurringTransactionEditPageState();
 }
 
-class _RecurringTransactionEditPageState
-    extends ConsumerState<RecurringTransactionEditPage> {
+class _RecurringTransactionEditPageState extends ConsumerState<RecurringTransactionEditPage> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
@@ -104,14 +102,12 @@ class _RecurringTransactionEditPageState
                 ? l10n.recurringTransactionEdit
                 : l10n.recurringTransactionAdd,
             showBack: true,
-            actions: _isEditing
-                ? [
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: _deleteRecurringTransaction,
-                    ),
-                  ]
-                : null,
+            actions: _isEditing ? [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: _deleteRecurringTransaction,
+              ),
+            ] : null,
           ),
           Expanded(
             child: Form(
@@ -209,8 +205,8 @@ class _RecurringTransactionEditPageState
                     child: SwitchListTile(
                       title: Text(l10n.recurringTransactionEnabled),
                       subtitle: Text(_enabled
-                          ? l10n.recurringTransactionEnabled
-                          : l10n.recurringTransactionDisabled),
+                        ? l10n.recurringTransactionEnabled
+                        : l10n.recurringTransactionDisabled),
                       value: _enabled,
                       onChanged: (value) {
                         setState(() {
@@ -243,8 +239,7 @@ class _RecurringTransactionEditPageState
       children: [
         Expanded(
           child: RadioListTile<String>(
-            title: Text(l10n.categoryExpense,
-                style: const TextStyle(fontSize: 14)),
+            title: Text(l10n.categoryExpense, style: const TextStyle(fontSize: 14)),
             value: 'expense',
             groupValue: _type,
             contentPadding: EdgeInsets.zero,
@@ -260,8 +255,7 @@ class _RecurringTransactionEditPageState
         ),
         Expanded(
           child: RadioListTile<String>(
-            title:
-                Text(l10n.categoryIncome, style: const TextStyle(fontSize: 14)),
+            title: Text(l10n.categoryIncome, style: const TextStyle(fontSize: 14)),
             value: 'income',
             groupValue: _type,
             contentPadding: EdgeInsets.zero,
@@ -277,8 +271,7 @@ class _RecurringTransactionEditPageState
         ),
         Expanded(
           child: RadioListTile<String>(
-            title:
-                Text(l10n.transferTitle, style: const TextStyle(fontSize: 14)),
+            title: Text(l10n.transferTitle, style: const TextStyle(fontSize: 14)),
             value: 'transfer',
             groupValue: _type,
             contentPadding: EdgeInsets.zero,
@@ -313,13 +306,10 @@ class _RecurringTransactionEditPageState
     );
   }
 
-  Widget _buildAccountSelector(AppLocalizations l10n,
-      {required bool isFromAccount}) {
+  Widget _buildAccountSelector(AppLocalizations l10n, {required bool isFromAccount}) {
     final accountId = isFromAccount ? _selectedAccountId : _selectedToAccountId;
     final label = isFromAccount
-        ? (_type == 'transfer'
-            ? l10n.transferFromAccount
-            : l10n.accountSelectTitle)
+        ? (_type == 'transfer' ? l10n.transferFromAccount : l10n.accountSelectTitle)
         : l10n.transferToAccount;
 
     return InkWell(
@@ -377,8 +367,7 @@ class _RecurringTransactionEditPageState
 
   bool _isFormValid() {
     // 检查金额
-    if (_amountController.text.isEmpty ||
-        double.tryParse(_amountController.text) == null) {
+    if (_amountController.text.isEmpty || double.tryParse(_amountController.text) == null) {
       return false;
     }
 
@@ -624,8 +613,7 @@ class _RecurringTransactionEditPageState
             itemBuilder: (context, index) {
               final category = categories[index];
               return ListTile(
-                title:
-                    Text(CategoryUtils.getDisplayName(category.name, context)),
+                title: Text(CategoryUtils.getDisplayName(category.name, context)),
                 onTap: () => Navigator.of(context).pop(category),
               );
             },
@@ -650,8 +638,7 @@ class _RecurringTransactionEditPageState
 
     // 获取所有账户，然后过滤与当前账本币种相同的账户
     final allAccounts = await repo.getAllAccounts();
-    var accounts =
-        allAccounts.where((a) => a.currency == ledger.currency).toList();
+    var accounts = allAccounts.where((a) => a.currency == ledger.currency).toList();
 
     // 如果是选择转入账户，排除已选择的转出账户
     if (!isFromAccount && _selectedAccountId != null) {
@@ -661,9 +648,7 @@ class _RecurringTransactionEditPageState
     if (!mounted) return;
 
     final title = isFromAccount
-        ? (_type == 'transfer'
-            ? AppLocalizations.of(context).transferFromAccount
-            : AppLocalizations.of(context).accountSelectTitle)
+        ? (_type == 'transfer' ? AppLocalizations.of(context).transferFromAccount : AppLocalizations.of(context).accountSelectTitle)
         : AppLocalizations.of(context).transferToAccount;
 
     final selected = await showDialog<int?>(
@@ -674,8 +659,7 @@ class _RecurringTransactionEditPageState
           width: double.maxFinite,
           child: ListView.builder(
             shrinkWrap: true,
-            itemCount: accounts.length +
-                (_type == 'transfer' && !isFromAccount ? 0 : 1), // 转入账户不显示"无账户"
+            itemCount: accounts.length + (_type == 'transfer' && !isFromAccount ? 0 : 1), // 转入账户不显示"无账户"
             itemBuilder: (context, index) {
               if (index == 0 && (_type != 'transfer' || isFromAccount)) {
                 return ListTile(
@@ -683,8 +667,7 @@ class _RecurringTransactionEditPageState
                   onTap: () => Navigator.of(context).pop(null),
                 );
               }
-              final accountIndex =
-                  _type == 'transfer' && !isFromAccount ? index : index - 1;
+              final accountIndex = _type == 'transfer' && !isFromAccount ? index : index - 1;
               final account = accounts[accountIndex];
               return ListTile(
                 title: Text(account.name),
@@ -734,12 +717,10 @@ class _RecurringTransactionEditPageState
       ledgerId: drift.Value(ledgerId),
       type: drift.Value(_type),
       amount: drift.Value(double.parse(_amountController.text)),
-      categoryId:
-          drift.Value(_type == 'transfer' ? null : _selectedCategory!.id),
+      categoryId: drift.Value(_type == 'transfer' ? null : _selectedCategory!.id),
       accountId: drift.Value(_selectedAccountId),
       toAccountId: drift.Value(_selectedToAccountId),
-      note: drift.Value(
-          _noteController.text.isEmpty ? null : _noteController.text),
+      note: drift.Value(_noteController.text.isEmpty ? null : _noteController.text),
       frequency: drift.Value(_frequency.value),
       interval: drift.Value(_interval),
       dayOfMonth: drift.Value(_dayOfMonth),
@@ -751,8 +732,7 @@ class _RecurringTransactionEditPageState
 
     try {
       if (_isEditing) {
-        await service.updateRecurringTransaction(
-            widget.recurring!.id, companion);
+        await service.updateRecurringTransaction(widget.recurring!.id, companion);
       } else {
         await service.createRecurringTransaction(companion);
       }
@@ -774,8 +754,7 @@ class _RecurringTransactionEditPageState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context).commonDelete),
-        content: Text(
-            AppLocalizations.of(context).recurringTransactionDeleteConfirm),
+        content: Text(AppLocalizations.of(context).recurringTransactionDeleteConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),

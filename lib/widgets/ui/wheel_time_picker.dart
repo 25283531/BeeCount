@@ -5,7 +5,7 @@ import '../../styles/tokens.dart';
 
 class WheelTimePicker extends StatefulWidget {
   final TimeOfDay initial;
-
+  
   const WheelTimePicker({
     super.key,
     required this.initial,
@@ -72,9 +72,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: isDark
-                        ? BeeTokens.border(context)
-                        : const Color(0xFFE5E5E5),
+                    color: isDark ? BeeTokens.border(context) : const Color(0xFFE5E5E5),
                     width: 0.5,
                   ),
                 ),
@@ -102,8 +100,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pop(TimeOfDay(hour: hour, minute: minute));
+                      Navigator.of(context).pop(TimeOfDay(hour: hour, minute: minute));
                     },
                     child: Text(
                       AppLocalizations.of(context).commonOk,
@@ -117,7 +114,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                 ],
               ),
             ),
-
+            
             // 时间选择器
             SizedBox(
               height: 216,
@@ -183,7 +180,7 @@ class _WheelTimePickerState extends State<WheelTimePicker> {
                 ],
               ),
             ),
-
+            
             const SizedBox(height: 20),
           ],
         ),

@@ -454,7 +454,7 @@ class _VoiceBillingPageState extends ConsumerState<VoiceBillingPage> {
                         );
                         
                         // 重新初始化或重置状态
-                          if (value && !_initializing) {
+                        if (value && !_initializing) {
                             _initAsr();
                           } else if (!value) {
                             setState(() {
@@ -462,7 +462,7 @@ class _VoiceBillingPageState extends ConsumerState<VoiceBillingPage> {
                               _recording = false;
                             });
                             // 确保_asr不为null再调用dispose
-                            _asr?.dispose();
+                            _asr.dispose();
                           }
                         }
                       }
@@ -511,7 +511,7 @@ class _VoiceBillingPageState extends ConsumerState<VoiceBillingPage> {
             tooltip: '语音识别设置',
           ),
         ],
-      );
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0.scaled(context, ref)),
@@ -945,21 +945,15 @@ class _VoiceBillingPageState extends ConsumerState<VoiceBillingPage> {
   OcrResult _parseVoiceRecognitionResult(String text, OcrResult baseResult) {
     // 提取金额
     double? amount = baseResult.amount;
-    if (amount == null) {
-      amount = _extractAmountFromVoiceText(text);
-    }
+    amount ??= _extractAmountFromVoiceText(text);
     
     // 提取商家
     String? merchant = baseResult.merchant;
-    if (merchant == null) {
-      merchant = _extractMerchantFromVoiceText(text);
-    }
+    merchant ??= _extractMerchantFromVoiceText(text);
     
     // 提取时间
     DateTime? time = baseResult.time;
-    if (time == null) {
-      time = _extractTimeFromVoiceText(text);
-    }
+    time ??= _extractTimeFromVoiceText(text);
     
     // 合并所有数字
     final allNumbers = _extractAllNumbersFromVoice(text);

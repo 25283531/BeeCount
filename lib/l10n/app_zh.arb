@@ -98,6 +98,14 @@
   },
   "searchBatchSetNoteTitle": "批量设置备注",
   "searchBatchSetNoteMessage": "将为选中的 {count} 笔记账设置相同的备注",
+  "voiceBilling": "语音记账",
+  "voiceBillingDesc": "通过语音快速录入记账信息",
+  "voiceBillingSettings": "语音识别设置",
+  "voiceBillingPrivacyInfo": "语音识别在设备本地进行，不会上传您的语音数据",
+  "voiceBillingDisabledMessage": "语音识别功能已关闭，请在设置中开启",
+  "voiceBillingEnabled": "语音识别已开启",
+  "voiceBillingDisabled": "语音识别已关闭",
+
   "@searchBatchSetNoteMessage": {
     "placeholders": {
       "count": {

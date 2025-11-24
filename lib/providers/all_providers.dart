@@ -1,5 +1,8 @@
 // 统一的providers导出文件，方便统一导入所有providers
 
+// 首先导出Riverpod核心类型
+export 'riverpod_imports.dart';
+
 // 主题相关
 export 'theme_providers.dart';
 

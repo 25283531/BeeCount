@@ -41,8 +41,7 @@ class TransactionEditorPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TransactionEditorPage> createState() =>
-      _TransactionEditorPageState();
+  ConsumerState<TransactionEditorPage> createState() => _TransactionEditorPageState();
 }
 
 class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
@@ -65,9 +64,7 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
 
     // 若需要自动打开金额输入，则在首帧后查询分类并触发
     // 注意：转账类型不走这个逻辑
-    if (widget.quickAdd &&
-        widget.initialCategoryId != null &&
-        widget.initialKind != 'transfer') {
+    if (widget.quickAdd && widget.initialCategoryId != null && widget.initialKind != 'transfer') {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!mounted || _autoOpened) return;
         final db = ref.read(databaseProvider);
@@ -110,24 +107,16 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
                             controller: _tab,
                             isScrollable: false,
                             labelColor: BeeTokens.textPrimary(context),
-                            unselectedLabelColor:
-                                BeeTokens.textSecondary(context),
+                            unselectedLabelColor: BeeTokens.textSecondary(context),
                             indicator: UnderlineTabIndicator(
-                              borderSide: BorderSide(
-                                  width: 2,
-                                  color: BeeTokens.textPrimary(context)),
+                              borderSide:
+                                  BorderSide(width: 2, color: BeeTokens.textPrimary(context)),
                               insets: const EdgeInsets.symmetric(horizontal: 0),
                             ),
                             tabs: [
-                              Tab(
-                                  text: AppLocalizations.of(context)
-                                      .categoryExpense),
-                              Tab(
-                                  text: AppLocalizations.of(context)
-                                      .categoryIncome),
-                              Tab(
-                                  text: AppLocalizations.of(context)
-                                      .transferTitle),
+                              Tab(text: AppLocalizations.of(context).categoryExpense),
+                              Tab(text: AppLocalizations.of(context).categoryIncome),
+                              Tab(text: AppLocalizations.of(context).transferTitle),
                             ],
                           ),
                         ),
@@ -135,8 +124,7 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         child: Text(AppLocalizations.of(context).commonCancel,
-                            style: TextStyle(
-                                color: BeeTokens.textPrimary(context))),
+                            style: TextStyle(color: BeeTokens.textPrimary(context))),
                       )
                     ],
                   ),
@@ -150,14 +138,12 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
               children: [
                 CategorySelector(
                   kind: 'expense',
-                  onCategorySelected: (c) =>
-                      _onCategorySelected(context, c, 'expense'),
+                  onCategorySelected: (c) => _onCategorySelected(context, c, 'expense'),
                   initialCategoryId: widget.initialCategoryId,
                 ),
                 CategorySelector(
                   kind: 'income',
-                  onCategorySelected: (c) =>
-                      _onCategorySelected(context, c, 'income'),
+                  onCategorySelected: (c) => _onCategorySelected(context, c, 'income'),
                   initialCategoryId: widget.initialCategoryId,
                 ),
                 TransferForm(
@@ -180,8 +166,7 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
     );
   }
 
-  Future<void> _onCategorySelected(
-      BuildContext context, Category c, String kind) async {
+  Future<void> _onCategorySelected(BuildContext context, Category c, String kind) async {
     if (!widget.quickAdd) {
       Navigator.pop(context, c);
       return;
@@ -242,10 +227,8 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
           if (!mounted) return;
           await updateAppWidget(ref, context);
           if (!mounted) return;
-          if (ctx.mounted && Navigator.of(ctx).canPop())
-            Navigator.of(ctx).pop();
-          if (context.mounted && Navigator.of(context).canPop())
-            Navigator.of(context).pop();
+          if (ctx.mounted && Navigator.of(ctx).canPop()) Navigator.of(ctx).pop();
+          if (context.mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
           // 反馈：轻微触感 + 系统点击音
           HapticFeedback.lightImpact();
           SystemSound.play(SystemSoundType.click);

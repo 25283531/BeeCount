@@ -89,7 +89,7 @@ Future<void> main() async {
   }
 
   runApp(ProviderScope(
-    parent: container,
+    container: container,
     observers: const [_WidgetUpdateObserver()],
     child: const MainApp(),
   ));
@@ -100,14 +100,13 @@ class _WidgetUpdateObserver extends ProviderObserver {
   const _WidgetUpdateObserver();
   @override
   void didUpdateProvider(
-    ProviderBase provider,
+    ProviderObserverContext<Object?> context,
     Object? previousValue,
     Object? newValue,
-    ProviderContainer container,
   ) {
     // Update widget when current ledger is loaded
-    if (provider == currentLedgerIdProvider && newValue != null) {
-      _updateWidgetOnStart(container);
+    if (context.provider == currentLedgerIdProvider && newValue != null) {
+      _updateWidgetOnStart(context.container);
     }
   }
 
