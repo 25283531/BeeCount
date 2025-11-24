@@ -95,7 +95,7 @@ final categoriesProvider = FutureProvider<List<Category>>((ref) async {
 });
 
 // 分类与交易笔数组合Provider（响应式版本）
-final categoriesWithCountProvider = StreamProvider<List<({Category category, int transactionCount})>>((ref) {
+final categoriesWithCountProvider = StreamProvider<List<CategoryWithCount>>((ref) {
   final repo = ref.watch(repositoryProvider);
   return repo.watchCategoriesWithCount();
 });

@@ -289,3 +289,14 @@ LazyDatabase _openConnection() {
     return NativeDatabase.createInBackground(file);
   });
 }
+
+/// 分类及其交易数量的组合类型
+class CategoryWithCount {
+  final Category category;
+  final int transactionCount;
+
+  const CategoryWithCount({
+    required this.category,
+    required this.transactionCount,
+  });
+}

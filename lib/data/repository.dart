@@ -894,7 +894,7 @@ class BeeRepository {
   }
 
   /// 响应式监听所有分类及其交易数量变化
-  Stream<List<({Category category, int transactionCount})>> watchCategoriesWithCount() {
+  Stream<List<CategoryWithCount>> watchCategoriesWithCount() {
     // 使用自定义查询监听分类和交易数量的变化
     return db.customSelect(
       '''
@@ -930,7 +930,10 @@ class BeeRepository {
           level: row.read<int>('category_level'),
         );
         final transactionCount = row.read<int>('transaction_count');
-        return (category: category, transactionCount: transactionCount);
+        return CategoryWithCount(
+          category: category,
+          transactionCount: transactionCount,
+        );
       }).toList();
     });
   }

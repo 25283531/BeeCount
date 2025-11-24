@@ -56,7 +56,7 @@ class _CategoryMigrationPageState extends ConsumerState<CategoryMigrationPage> {
     );
   }
   
-  Widget _buildMigrationForm(List<({db.Category category, int transactionCount})> categoriesWithCount) {
+  Widget _buildMigrationForm(List<CategoryWithCount> categoriesWithCount) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

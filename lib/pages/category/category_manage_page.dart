@@ -137,7 +137,7 @@ class _CategoryManagePageState extends ConsumerState<CategoryManagePage> with Ti
 }
 
 class _CategoryGridView extends ConsumerStatefulWidget {
-  final List<({db.Category category, int transactionCount})> categoriesWithCount;
+  final List<CategoryWithCount> categoriesWithCount;
   final String kind;
 
   const _CategoryGridView({
@@ -496,7 +496,7 @@ class _CategoryCard extends ConsumerWidget {
 /// 子分类对话框
 class _SubcategoryDialog extends ConsumerStatefulWidget {
   final db.Category parentCategory;
-  final List<({db.Category category, int transactionCount})> categoriesWithCount;
+  final List<CategoryWithCount> categoriesWithCount;
   final Function(db.Category) onSubCategoryTap;
   final VoidCallback onAddSubCategory;
   final VoidCallback onEditParentCategory;

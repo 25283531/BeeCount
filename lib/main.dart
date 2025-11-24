@@ -100,13 +100,14 @@ class _WidgetUpdateObserver extends ProviderObserver {
   const _WidgetUpdateObserver();
   @override
   void didUpdateProvider(
-    ProviderObserverContext<Object?> context,
+    covariant ProviderBase<dynamic> provider,
     Object? previousValue,
     Object? newValue,
+    ProviderContainer container,
   ) {
     // Update widget when current ledger is loaded
-    if (context.provider == currentLedgerIdProvider && newValue != null) {
-      _updateWidgetOnStart(context.container);
+    if (provider == currentLedgerIdProvider && newValue != null) {
+      _updateWidgetOnStart(container);
     }
   }
 
