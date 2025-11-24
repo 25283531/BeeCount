@@ -1,0 +1,17 @@
+{
+  "zh_TW": [
+    "voiceBilling",
+    "voiceBillingDesc",
+    "voiceBillingSettings",
+    "voiceBillingPrivacyInfo",
+    "voiceBillingDisabledMessage",
+    "voiceBillingEnabled",
+    "voiceBillingDisabled",
+    "accountDefaultIncomeTitle",
+    "accountDefaultIncomeDescription",
+    "accountDefaultExpenseTitle",
+    "accountDefaultExpenseDescription",
+    "accountDefaultNone",
+    "accountDefaultSet"
+  ]
+}
