@@ -114,23 +114,50 @@ class AccountsPage extends ConsumerWidget {
                       data: (enabled) {
                         return SectionCard(
                           margin: EdgeInsets.zero,
-                          child: SwitchListTile(
-                            title: Text(
-                              l10n.accountsEnableFeature,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                          child: Column(
+                            children: [
+                              SwitchListTile(
+                                title: Text(
+                                  l10n.accountsEnableFeature,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                subtitle: Text(l10n.accountsFeatureDescription),
+                                value: enabled,
+                                activeColor: primaryColor,
+                                onChanged: (value) async {
+                                  await ref
+                                      .read(accountFeatureSetterProvider)
+                                      .setEnabled(value);
+                                  ref.invalidate(accountFeatureEnabledProvider);
+                                },
                               ),
-                            ),
-                            subtitle: Text(l10n.accountsFeatureDescription),
-                            value: enabled,
-                            activeColor: primaryColor,
-                            onChanged: (value) async {
-                              await ref
-                                  .read(accountFeatureSetterProvider)
-                                  .setEnabled(value);
-                              ref.invalidate(accountFeatureEnabledProvider);
-                            },
+                              // 默认账户设置（仅在启用账户功能时显示）
+                              if (enabled && accounts.isNotEmpty) ...[
+                                Divider(
+                                  height: 1,
+                                  color: BeeTokens.divider(context),
+                                ),
+                                _DefaultAccountSelector(
+                                  accounts: accounts,
+                                  primaryColor: primaryColor,
+                                  type: 'expense',
+                                ),
+                                Divider(
+                                  height: 1,
+                                  indent: 16,
+                                  endIndent: 16,
+                                  color: BeeTokens.divider(context),
+                                ),
+                                _DefaultAccountSelector(
+                                  accounts: accounts,
+                                  primaryColor: primaryColor,
+                                  type: 'income',
+                                ),
+                              ],
+                            ],
                           ),
                         );
                       },
@@ -627,5 +654,236 @@ class _CardStatItem extends ConsumerWidget {
         ),
       ],
     );
+  }
+}
+
+/// 默认账户选择器
+class _DefaultAccountSelector extends ConsumerWidget {
+  final List<db.Account> accounts;
+  final Color primaryColor;
+  final String type; // 'income' 或 'expense'
+
+  const _DefaultAccountSelector({
+    required this.accounts,
+    required this.primaryColor,
+    required this.type,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final isIncome = type == 'income';
+    final defaultAccountIdAsync = isIncome
+        ? ref.watch(defaultIncomeAccountIdProvider)
+        : ref.watch(defaultExpenseAccountIdProvider);
+
+    return defaultAccountIdAsync.when(
+      data: (defaultAccountId) {
+        // 查找默认账户
+        db.Account? defaultAccount;
+        if (defaultAccountId != null) {
+          defaultAccount = accounts
+              .where((a) => a.id == defaultAccountId)
+              .firstOrNull;
+        }
+
+        final title = isIncome
+            ? l10n.accountDefaultIncomeTitle
+            : l10n.accountDefaultExpenseTitle;
+        final description = isIncome
+            ? l10n.accountDefaultIncomeDescription
+            : l10n.accountDefaultExpenseDescription;
+
+        return ListTile(
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          subtitle: Text(
+            defaultAccount != null
+                ? l10n.accountDefaultSet(defaultAccount.name)
+                : description,
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                defaultAccount?.name ?? l10n.accountDefaultNone,
+                style: TextStyle(
+                  color: BeeTokens.textSecondary(context),
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(width: 4.0.scaled(context, ref)),
+              Icon(
+                Icons.chevron_right,
+                color: BeeTokens.iconTertiary(context),
+              ),
+            ],
+          ),
+          onTap: () => _showAccountPicker(context, ref, accounts, defaultAccountId),
+        );
+      },
+      loading: () => ListTile(
+        title: Text(isIncome ? l10n.accountDefaultIncomeTitle : l10n.accountDefaultExpenseTitle),
+        trailing: const SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+
+  void _showAccountPicker(
+    BuildContext context,
+    WidgetRef ref,
+    List<db.Account> accounts,
+    int? currentDefaultId,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    final isIncome = type == 'income';
+    final title = isIncome
+        ? l10n.accountDefaultIncomeTitle
+        : l10n.accountDefaultExpenseTitle;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: BeeTokens.surfaceElevated(context),
+        title: Text(
+          title,
+          style: TextStyle(color: BeeTokens.textPrimary(context)),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 不设置选项
+              _buildAccountOption(
+                context, ref,
+                title: l10n.accountDefaultNone,
+                icon: Icons.block,
+                iconColor: BeeTokens.iconSecondary(context),
+                isSelected: currentDefaultId == null,
+                onTap: () async {
+                  if (isIncome) {
+                    await ref
+                        .read(defaultAccountSetterProvider)
+                        .setDefaultIncomeAccountId(null);
+                    ref.invalidate(defaultIncomeAccountIdProvider);
+                  } else {
+                    await ref
+                        .read(defaultAccountSetterProvider)
+                        .setDefaultExpenseAccountId(null);
+                    ref.invalidate(defaultExpenseAccountIdProvider);
+                  }
+                  if (context.mounted) Navigator.pop(context);
+                },
+              ),
+              // 账户列表
+              ...accounts.map((account) {
+                final isSelected = account.id == currentDefaultId;
+                return _buildAccountOption(
+                  context, ref,
+                  title: account.name,
+                  subtitle: getCurrencyName(account.currency, context),
+                  icon: _getIconForType(account.type),
+                  iconColor: _getColorForType(account.type, primaryColor),
+                  isSelected: isSelected,
+                  onTap: () async {
+                    if (isIncome) {
+                      await ref
+                          .read(defaultAccountSetterProvider)
+                          .setDefaultIncomeAccountId(account.id);
+                      ref.invalidate(defaultIncomeAccountIdProvider);
+                    } else {
+                      await ref
+                          .read(defaultAccountSetterProvider)
+                          .setDefaultExpenseAccountId(account.id);
+                      ref.invalidate(defaultExpenseAccountIdProvider);
+                    }
+                    if (context.mounted) Navigator.pop(context);
+                  },
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountOption(
+    BuildContext context,
+    WidgetRef ref, {
+    required String title,
+    String? subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? primaryColor : BeeTokens.textPrimary(context),
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+        ),
+      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 12,
+                color: BeeTokens.textTertiary(context),
+              ),
+            )
+          : null,
+      trailing: isSelected ? Icon(Icons.check, color: primaryColor) : null,
+      onTap: onTap,
+    );
+  }
+
+  IconData _getIconForType(String type) {
+    switch (type) {
+      case 'cash':
+        return Icons.payments_outlined;
+      case 'bank_card':
+        return Icons.credit_card;
+      case 'credit_card':
+        return Icons.credit_score;
+      case 'alipay':
+        return Icons.currency_yuan;
+      case 'wechat':
+        return Icons.chat;
+      case 'other':
+        return Icons.account_balance_outlined;
+      default:
+        return Icons.account_balance_wallet_outlined;
+    }
+  }
+
+  Color _getColorForType(String type, Color primaryColor) {
+    switch (type) {
+      case 'alipay':
+        return const Color(0xFF1677FF);
+      case 'wechat':
+        return const Color(0xFF07C160);
+      case 'cash':
+        return Colors.orange;
+      case 'bank_card':
+        return const Color(0xFF1890FF);
+      case 'credit_card':
+        return Colors.purple;
+      default:
+        return primaryColor;
+    }
   }
 }

@@ -224,7 +224,7 @@ class _AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
     }
 
     String fmtDate(DateTime d) => '${d.year}/${d.month}/${d.day}';
-    String fmtDateTime(DateTime d) => '${d.month}/${d.day} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}:${d.second.toString().padLeft(2, '0')}';
+    String fmtTime(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}:${d.second.toString().padLeft(2, '0')}';
     final showTime = ref.watch(showTransactionTimeProvider);
 
     return SafeArea(
@@ -386,12 +386,31 @@ class _AmountEditorSheetState extends ConsumerState<AmountEditorSheet> {
                         child: SizedBox(
                           height: 60,
                           child: Center(
-                            child: Text(
-                              showTime ? fmtDateTime(_date) : fmtDate(_date),
-                              style: text.labelMedium?.copyWith(
-                                  color: BeeTokens.textPrimary(context),
-                                  fontWeight: FontWeight.w600),
-                            ),
+                            child: showTime
+                                ? Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        fmtDate(_date),
+                                        style: text.labelSmall?.copyWith(
+                                            color: BeeTokens.textPrimary(context),
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        fmtTime(_date),
+                                        style: text.labelSmall?.copyWith(
+                                            color: BeeTokens.textSecondary(context),
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  )
+                                : Text(
+                                    fmtDate(_date),
+                                    style: text.labelMedium?.copyWith(
+                                        color: BeeTokens.textPrimary(context),
+                                        fontWeight: FontWeight.w600),
+                                  ),
                           ),
                         ),
                       ),

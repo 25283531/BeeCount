@@ -172,6 +172,8 @@ class AIConfig {
 class AppSettingsConfig {
   // 账户管理
   final bool? accountFeatureEnabled;
+  final int? defaultIncomeAccountId;
+  final int? defaultExpenseAccountId;
 
   // 记账提醒
   final bool? reminderEnabled;
@@ -187,6 +189,12 @@ class AppSettingsConfig {
   final int? fontScaleLevel;
   final double? customFontScale;
 
+  // 外观设置
+  final String? themeMode;
+  final String? darkModePatternStyle;
+  final bool? compactAmount;
+  final bool? showTransactionTime;
+
   // 云服务选择
   final String? cloudServiceType;
 
@@ -196,6 +204,8 @@ class AppSettingsConfig {
 
   const AppSettingsConfig({
     this.accountFeatureEnabled,
+    this.defaultIncomeAccountId,
+    this.defaultExpenseAccountId,
     this.reminderEnabled,
     this.reminderHour,
     this.reminderMinute,
@@ -204,6 +214,10 @@ class AppSettingsConfig {
     this.primaryColor,
     this.fontScaleLevel,
     this.customFontScale,
+    this.themeMode,
+    this.darkModePatternStyle,
+    this.compactAmount,
+    this.showTransactionTime,
     this.cloudServiceType,
     this.autoScreenshotEnabled,
     this.shortcutPreferCamera,
@@ -214,6 +228,12 @@ class AppSettingsConfig {
 
     if (accountFeatureEnabled != null) {
       map['account_feature_enabled'] = accountFeatureEnabled;
+    }
+    if (defaultIncomeAccountId != null) {
+      map['default_income_account_id'] = defaultIncomeAccountId;
+    }
+    if (defaultExpenseAccountId != null) {
+      map['default_expense_account_id'] = defaultExpenseAccountId;
     }
     if (reminderEnabled != null) {
       map['reminder_enabled'] = reminderEnabled;
@@ -239,6 +259,18 @@ class AppSettingsConfig {
     if (customFontScale != null) {
       map['custom_font_scale'] = customFontScale;
     }
+    if (themeMode != null && themeMode!.isNotEmpty) {
+      map['theme_mode'] = themeMode;
+    }
+    if (darkModePatternStyle != null && darkModePatternStyle!.isNotEmpty) {
+      map['dark_mode_pattern_style'] = darkModePatternStyle;
+    }
+    if (compactAmount != null) {
+      map['compact_amount'] = compactAmount;
+    }
+    if (showTransactionTime != null) {
+      map['show_transaction_time'] = showTransactionTime;
+    }
     if (cloudServiceType != null && cloudServiceType!.isNotEmpty) {
       map['cloud_service_type'] = cloudServiceType;
     }
@@ -255,6 +287,8 @@ class AppSettingsConfig {
   static AppSettingsConfig fromMap(Map<String, dynamic> map) =>
       AppSettingsConfig(
         accountFeatureEnabled: map['account_feature_enabled'] as bool?,
+        defaultIncomeAccountId: map['default_income_account_id'] as int?,
+        defaultExpenseAccountId: map['default_expense_account_id'] as int?,
         reminderEnabled: map['reminder_enabled'] as bool?,
         reminderHour: map['reminder_hour'] as int?,
         reminderMinute: map['reminder_minute'] as int?,
@@ -265,6 +299,10 @@ class AppSettingsConfig {
         customFontScale: map['custom_font_scale'] != null
             ? (map['custom_font_scale'] as num).toDouble()
             : null,
+        themeMode: map['theme_mode'] as String?,
+        darkModePatternStyle: map['dark_mode_pattern_style'] as String?,
+        compactAmount: map['compact_amount'] as bool?,
+        showTransactionTime: map['show_transaction_time'] as bool?,
         cloudServiceType: map['cloud_service_type'] as String?,
         autoScreenshotEnabled: map['auto_screenshot_enabled'] as bool?,
         shortcutPreferCamera: map['shortcut_prefer_camera'] as bool?,
@@ -452,6 +490,8 @@ class ConfigExportService {
     // 读取应用设置
     AppSettingsConfig? appSettings;
     final accountFeatureEnabled = prefs.getBool('account_feature_enabled');
+    final defaultIncomeAccountId = prefs.getInt('default_income_account_id');
+    final defaultExpenseAccountId = prefs.getInt('default_expense_account_id');
     final reminderEnabled = prefs.getBool('reminder_enabled');
     final reminderHour = prefs.getInt('reminder_hour');
     final reminderMinute = prefs.getInt('reminder_minute');
@@ -460,12 +500,18 @@ class ConfigExportService {
     final primaryColor = prefs.getInt('primaryColor');
     final fontScaleLevel = prefs.getInt('fontScaleLevel');
     final customFontScale = prefs.getDouble('customFontScale');
+    final themeMode = prefs.getString('themeMode');
+    final darkModePatternStyle = prefs.getString('darkModePatternStyle');
+    final compactAmount = prefs.getBool('compactAmount');
+    final showTransactionTime = prefs.getBool('showTransactionTime');
     final cloudServiceType = prefs.getString('selected_cloud_service');
     final autoScreenshotEnabled = prefs.getBool('auto_screenshot_billing_enabled');
     final shortcutPreferCamera = prefs.getBool('shortcut_prefer_camera');
 
     // 如果有任何应用设置，就创建配置对象
     if (accountFeatureEnabled != null ||
+        defaultIncomeAccountId != null ||
+        defaultExpenseAccountId != null ||
         reminderEnabled != null ||
         reminderHour != null ||
         reminderMinute != null ||
@@ -474,11 +520,17 @@ class ConfigExportService {
         primaryColor != null ||
         fontScaleLevel != null ||
         customFontScale != null ||
+        themeMode != null ||
+        darkModePatternStyle != null ||
+        compactAmount != null ||
+        showTransactionTime != null ||
         cloudServiceType != null ||
         autoScreenshotEnabled != null ||
         shortcutPreferCamera != null) {
       appSettings = AppSettingsConfig(
         accountFeatureEnabled: accountFeatureEnabled,
+        defaultIncomeAccountId: defaultIncomeAccountId,
+        defaultExpenseAccountId: defaultExpenseAccountId,
         reminderEnabled: reminderEnabled,
         reminderHour: reminderHour,
         reminderMinute: reminderMinute,
@@ -487,6 +539,10 @@ class ConfigExportService {
         primaryColor: primaryColor,
         fontScaleLevel: fontScaleLevel,
         customFontScale: customFontScale,
+        themeMode: themeMode,
+        darkModePatternStyle: darkModePatternStyle,
+        compactAmount: compactAmount,
+        showTransactionTime: showTransactionTime,
         cloudServiceType: cloudServiceType,
         autoScreenshotEnabled: autoScreenshotEnabled,
         shortcutPreferCamera: shortcutPreferCamera,
@@ -572,9 +628,19 @@ class ConfigExportService {
       buffer.writeln('app_settings:');
       final settings = yamlMap['app_settings'] as Map<String, dynamic>;
 
-      if (settings.containsKey('account_feature_enabled')) {
+      if (settings.containsKey('account_feature_enabled') ||
+          settings.containsKey('default_income_account_id') ||
+          settings.containsKey('default_expense_account_id')) {
         buffer.writeln('  # 账户管理');
-        buffer.writeln('  account_feature_enabled: ${settings['account_feature_enabled']}');
+        if (settings.containsKey('account_feature_enabled')) {
+          buffer.writeln('  account_feature_enabled: ${settings['account_feature_enabled']}');
+        }
+        if (settings.containsKey('default_income_account_id')) {
+          buffer.writeln('  default_income_account_id: ${settings['default_income_account_id']}');
+        }
+        if (settings.containsKey('default_expense_account_id')) {
+          buffer.writeln('  default_expense_account_id: ${settings['default_expense_account_id']}');
+        }
       }
 
       if (settings.containsKey('reminder_enabled') ||
@@ -614,6 +680,25 @@ class ConfigExportService {
         }
         if (settings.containsKey('custom_font_scale')) {
           buffer.writeln('  custom_font_scale: ${settings['custom_font_scale']}');
+        }
+      }
+
+      if (settings.containsKey('theme_mode') ||
+          settings.containsKey('dark_mode_pattern_style') ||
+          settings.containsKey('compact_amount') ||
+          settings.containsKey('show_transaction_time')) {
+        buffer.writeln('  # 外观设置');
+        if (settings.containsKey('theme_mode')) {
+          buffer.writeln('  theme_mode: "${settings['theme_mode']}"');
+        }
+        if (settings.containsKey('dark_mode_pattern_style')) {
+          buffer.writeln('  dark_mode_pattern_style: "${settings['dark_mode_pattern_style']}"');
+        }
+        if (settings.containsKey('compact_amount')) {
+          buffer.writeln('  compact_amount: ${settings['compact_amount']}');
+        }
+        if (settings.containsKey('show_transaction_time')) {
+          buffer.writeln('  show_transaction_time: ${settings['show_transaction_time']}');
         }
       }
 
@@ -757,6 +842,12 @@ class ConfigExportService {
       if (settings.accountFeatureEnabled != null) {
         await prefs.setBool('account_feature_enabled', settings.accountFeatureEnabled!);
       }
+      if (settings.defaultIncomeAccountId != null) {
+        await prefs.setInt('default_income_account_id', settings.defaultIncomeAccountId!);
+      }
+      if (settings.defaultExpenseAccountId != null) {
+        await prefs.setInt('default_expense_account_id', settings.defaultExpenseAccountId!);
+      }
 
       // 记账提醒
       if (settings.reminderEnabled != null) {
@@ -786,6 +877,20 @@ class ConfigExportService {
       }
       if (settings.customFontScale != null) {
         await prefs.setDouble('customFontScale', settings.customFontScale!);
+      }
+
+      // 外观设置
+      if (settings.themeMode != null) {
+        await prefs.setString('themeMode', settings.themeMode!);
+      }
+      if (settings.darkModePatternStyle != null) {
+        await prefs.setString('darkModePatternStyle', settings.darkModePatternStyle!);
+      }
+      if (settings.compactAmount != null) {
+        await prefs.setBool('compactAmount', settings.compactAmount!);
+      }
+      if (settings.showTransactionTime != null) {
+        await prefs.setBool('showTransactionTime', settings.showTransactionTime!);
       }
 
       // 云服务

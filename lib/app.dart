@@ -321,55 +321,92 @@ class _BeeAppState extends ConsumerState<BeeApp> with WidgetsBindingObserver {
           final style = ref.watch(headerStyleProvider);
           final color = Theme.of(context).colorScheme.primary;
           final cameraFirst = ref.watch(fabCameraFirstProvider).value ?? false;
+          final tipDismissed = ref.watch(fabLongPressTipDismissedProvider).value ?? true;
+          final l10n = AppLocalizations.of(context);
 
           // 根据设置决定图标：拍照优先显示相机，手动优先显示+号
           final icon = cameraFirst ? Icons.camera_alt : Icons.add;
 
+          // 只有在手动优先模式下才显示长按拍照提示
+          final showTip = !cameraFirst && !tipDismissed;
+
           return SizedBox(
-            width: 80.0.scaled(context, ref),
-            height: 80.0.scaled(context, ref),
-            child: GestureDetector(
-              onLongPress: () async {
-                // 长按行为：与短按相反
-                if (cameraFirst) {
-                  // 拍照优先模式：长按打开手动记账
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const TransactionEditorPage(
-                        initialKind: 'expense',
-                        quickAdd: true,
+            width: showTip ? 200.0.scaled(context, ref) : 80.0.scaled(context, ref),
+            height: showTip ? 140.0.scaled(context, ref) : 80.0.scaled(context, ref),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.bottomCenter,
+              children: [
+                // FAB 按钮
+                Positioned(
+                  bottom: 0,
+                  child: SizedBox(
+                    width: 80.0.scaled(context, ref),
+                    height: 80.0.scaled(context, ref),
+                    child: GestureDetector(
+                      onLongPress: () async {
+                        // 长按行为：与短按相反
+                        if (cameraFirst) {
+                          // 拍照优先模式：长按打开手动记账
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const TransactionEditorPage(
+                                initialKind: 'expense',
+                                quickAdd: true,
+                              ),
+                            ),
+                          );
+                        } else {
+                          // 手动优先模式：长按打开拍照记账
+                          // 关闭提示
+                          if (!tipDismissed) {
+                            await ref.read(fabTipSetterProvider).dismiss();
+                            ref.invalidate(fabLongPressTipDismissedProvider);
+                          }
+                          await _openCameraForBilling(context, ref);
+                        }
+                      },
+                      child: FloatingActionButton(
+                        heroTag: 'addFab',
+                        elevation: 8,  // ⭐ 保持阴影
+                        shape: const CircleBorder(),
+                        backgroundColor: style == 'primary' ? color : color,  // ⭐ 主题色背景
+                        onPressed: () async {
+                          // 短按行为：根据设置决定
+                          if (cameraFirst) {
+                            // 拍照优先模式：短按打开拍照记账
+                            await _openCameraForBilling(context, ref);
+                          } else {
+                            // 手动优先模式：短按打开手动记账
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const TransactionEditorPage(
+                                  initialKind: 'expense',
+                                  quickAdd: true,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Icon(icon, color: Colors.white, size: 34.0.scaled(context, ref)),
                       ),
                     ),
-                  );
-                } else {
-                  // 手动优先模式：长按打开拍照记账
-                  await _openCameraForBilling(context, ref);
-                }
-              },
-              child: FloatingActionButton(
-                heroTag: 'addFab',
-                elevation: 8,  // ⭐ 保持阴影
-                shape: const CircleBorder(),
-                backgroundColor: style == 'primary' ? color : color,  // ⭐ 主题色背景
-                onPressed: () async {
-                  // 短按行为：根据设置决定
-                  if (cameraFirst) {
-                    // 拍照优先模式：短按打开拍照记账
-                    await _openCameraForBilling(context, ref);
-                  } else {
-                    // 手动优先模式：短按打开手动记账
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const TransactionEditorPage(
-                          initialKind: 'expense',
-                          quickAdd: true,
-                        ),
-                      ),
-                    );
-                  }
-                },
-                child: Icon(icon, color: Colors.white, size: 34.0.scaled(context, ref)),
-              ),
+                  ),
+                ),
+                // 长按提示气泡（带箭头和呼吸动画）
+                if (showTip)
+                  Positioned(
+                    top: 0,
+                    child: _FabTipBubble(
+                      text: l10n.fabLongPressTip,
+                      primaryColor: color,
+                      onDismiss: () async {
+                        await ref.read(fabTipSetterProvider).dismiss();
+                        ref.invalidate(fabLongPressTipDismissedProvider);
+                      },
+                    ),
+                  ),
+              ],
             ),
           );
         }),
@@ -406,4 +443,145 @@ class _BeeAppState extends ConsumerState<BeeApp> with WidgetsBindingObserver {
       ),
     );
   }
+}
+
+/// FAB 长按提示气泡组件（带箭头和呼吸动画）
+class _FabTipBubble extends StatefulWidget {
+  final String text;
+  final Color primaryColor;
+  final VoidCallback onDismiss;
+
+  const _FabTipBubble({
+    required this.text,
+    required this.primaryColor,
+    required this.onDismiss,
+  });
+
+  @override
+  State<_FabTipBubble> createState() => _FabTipBubbleState();
+}
+
+class _FabTipBubbleState extends State<_FabTipBubble>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
+    _opacityAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = widget.primaryColor;
+
+    return AnimatedBuilder(
+      animation: _opacityAnimation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _opacityAnimation.value,
+          child: child,
+        );
+      },
+      child: GestureDetector(
+        onTap: widget.onDismiss,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 气泡主体
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.touch_app,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.text,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 箭头指向 FAB
+            CustomPaint(
+              size: const Size(16, 10),
+              painter: _ArrowPainter(color: primaryColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 箭头绘制器
+class _ArrowPainter extends CustomPainter {
+  final Color color;
+
+  _ArrowPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..lineTo(size.width, 0)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

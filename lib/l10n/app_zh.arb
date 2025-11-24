@@ -9,6 +9,7 @@
   "commonConfirm": "确认",
   "commonSave": "保存",
   "commonDelete": "删除",
+  "commonAdd": "添加",
   "commonEdit": "编辑",
   "commonOk": "确定",
   "commonNo": "否",
@@ -18,6 +19,7 @@
   "commonFailed": "失败",
   "commonBack": "返回",
   "commonNext": "下一步",
+  "fabLongPressTip": "长按可拍照记账",
   "commonPrevious": "上一步",
   "commonFinish": "完成",
   "commonClose": "关闭",
@@ -710,7 +712,7 @@
     }
   },
   "exportTitle": "导出",
-  "exportDescription": "支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 周期账单\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。",
+  "exportDescription": "支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。",
   "exportButtonIOS": "导出并分享",
   "exportButtonAndroid": "导出数据",
   "exportSavedTo": "已保存到：{path}",
@@ -1279,7 +1281,7 @@
   "configIncludeSupabase": "Supabase 云服务配置",
   "configIncludeWebdav": "WebDAV 云服务配置",
   "configIncludeAI": "AI 智能识别配置",
-  "configIncludeAppSettings": "应用设置（语言、主题、提醒等）",
+  "configIncludeAppSettings": "应用设置（语言、外观、提醒、默认账户等）",
   "configIncludeRecurringTransactions": "周期账单",
   "ledgersLocal": "本地账本",
   "ledgersRemote": "云端账本",
@@ -1433,6 +1435,19 @@
   "accountTotalExpense": "总支出",
   "accountTotalIncome": "总收入",
   "accountCurrencyLocked": "该账户已有交易记录，不允许修改币种",
+  "accountDefaultIncomeTitle": "默认收入账户",
+  "accountDefaultIncomeDescription": "新建收入时自动选中此账户",
+  "accountDefaultExpenseTitle": "默认支出账户",
+  "accountDefaultExpenseDescription": "新建支出时自动选中此账户",
+  "accountDefaultNone": "不设置",
+  "accountDefaultSet": "已设置: {name}",
+  "@accountDefaultSet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "commonNotice": "提示",
   "transferTitle": "转账",
   "transferFromAccount": "转出账户",

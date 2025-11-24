@@ -66,4 +66,40 @@ class CategoryHierarchy {
         .toList()
       ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
   }
+
+  /// 获取可用于记账的分类（叶子分类）
+  ///
+  /// 可用分类 = 没有子分类的分类
+  /// - 如果是一级分类且有子分类 -> 不可用（需要选择子分类）
+  /// - 如果是一级分类且没有子分类 -> 可用
+  /// - 如果是二级分类 -> 可用
+  ///
+  /// 此方法用于：
+  /// 1. AI 记账时匹配分类
+  /// 2. AI 提示词中传递分类列表
+  /// 3. 分类兜底选择
+  static List<Category> getUsableCategories(List<Category> allCategories) {
+    // 找出所有作为父分类的 ID
+    final parentIds = allCategories
+        .where((c) => c.parentId != null)
+        .map((c) => c.parentId!)
+        .toSet();
+
+    // 过滤出可用分类：不是父分类的分类
+    return allCategories
+        .where((c) => !parentIds.contains(c.id))
+        .toList()
+      ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+  }
+
+  /// 获取指定类型的可用分类（叶子分类）
+  ///
+  /// [kind] 分类类型：'expense' 或 'income'
+  static List<Category> getUsableCategoriesByKind(
+    List<Category> allCategories,
+    String kind,
+  ) {
+    final filtered = allCategories.where((c) => c.kind == kind).toList();
+    return getUsableCategories(filtered);
+  }
 }

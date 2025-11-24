@@ -236,7 +236,16 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: "stable"
-          cache: true
+          cache: false
+
+      # 手动缓存 pub 依赖
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ runner.os }}-${{ env.FLUTTER_VERSION }}-${{ github.sha }}
+          restore-keys: |
+            pub-${{ runner.os }}-${{ env.FLUTTER_VERSION }}-
 
       - name: Flutter pub get
         run: flutter pub get

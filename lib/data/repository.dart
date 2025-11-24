@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' as d;
 
 import 'db.dart';
+import 'category_node.dart';
 import '../services/logger_service.dart';
 
 class BeeRepository {
@@ -1419,6 +1420,18 @@ class BeeRepository {
           ..where((c) => c.kind.equals(kind) & c.level.equals(1) & c.parentId.isNull())
           ..orderBy([(c) => d.OrderingTerm(expression: c.sortOrder)]))
         .get();
+  }
+
+  /// 获取可用于记账的分类（叶子分类）
+  ///
+  /// 可用分类 = 没有子分类的分类
+  /// 用于 AI 记账时匹配和提示词生成
+  Future<List<Category>> getUsableCategories(String kind) async {
+    final allCategories = await (db.select(db.categories)
+          ..where((c) => c.kind.equals(kind))
+          ..orderBy([(c) => d.OrderingTerm(expression: c.sortOrder)]))
+        .get();
+    return CategoryHierarchy.getUsableCategories(allCategories);
   }
 
   /// 获取指定一级分类下的所有二级分类
