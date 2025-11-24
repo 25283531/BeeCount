@@ -6,22 +6,21 @@ import '../../styles/tokens.dart';
 class IconPickerPage extends StatefulWidget {
   final String? currentIcon;
   final String kind; // expense 或 income
-
+  
   const IconPickerPage({
     super.key,
     this.currentIcon,
     required this.kind,
   });
-
+  
   @override
   State<IconPickerPage> createState() => _IconPickerPageState();
 }
 
-class _IconPickerPageState extends State<IconPickerPage>
-    with TickerProviderStateMixin {
+class _IconPickerPageState extends State<IconPickerPage> with TickerProviderStateMixin {
   late TabController _tabController;
   String? _selectedIcon;
-
+  
   @override
   void initState() {
     super.initState();
@@ -29,17 +28,17 @@ class _IconPickerPageState extends State<IconPickerPage>
     final categories = _getIconCategories();
     _tabController = TabController(length: categories.length, vsync: this);
   }
-
+  
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     final categories = _getIconCategories();
-
+    
     return Scaffold(
       body: Column(
         children: [
@@ -59,9 +58,7 @@ class _IconPickerPageState extends State<IconPickerPage>
               isScrollable: true,
               labelColor: BeeTokens.textPrimary(context),
               unselectedLabelColor: BeeTokens.textSecondary(context),
-              tabs: categories
-                  .map((category) => Tab(text: category.name))
-                  .toList(),
+              tabs: categories.map((category) => Tab(text: category.name)).toList(),
             ),
           ),
           Expanded(
@@ -84,7 +81,7 @@ class _IconPickerPageState extends State<IconPickerPage>
       ),
     );
   }
-
+  
   List<_IconCategory> _getIconCategories() {
     if (widget.kind == 'expense') {
       return [
@@ -146,8 +143,7 @@ class _IconPickerPageState extends State<IconPickerPage>
           name: AppLocalizations.of(context).iconCategoryLife,
           icons: [
             _IconItem('home', Icons.home, '居家'),
-            _IconItem(
-                'local_laundry_service', Icons.local_laundry_service, '洗衣'),
+            _IconItem('local_laundry_service', Icons.local_laundry_service, '洗衣'),
             _IconItem('cleaning_services', Icons.cleaning_services, '清洁'),
             _IconItem('plumbing', Icons.plumbing, '维修'),
             _IconItem('electrical_services', Icons.electrical_services, '电工'),
@@ -222,8 +218,7 @@ class _IconPickerPageState extends State<IconPickerPage>
             _IconItem('currency_exchange', Icons.currency_exchange, '汇率'),
             _IconItem('wallet', Icons.wallet, '钱包'),
             _IconItem('credit_card', Icons.credit_card, '信用卡'),
-            _IconItem(
-                'account_balance_wallet', Icons.account_balance_wallet, '余额'),
+            _IconItem('account_balance_wallet', Icons.account_balance_wallet, '余额'),
           ],
         ),
         _IconCategory(
@@ -261,13 +256,13 @@ class _IconGrid extends StatelessWidget {
   final List<_IconItem> icons;
   final String? selectedIcon;
   final ValueChanged<String> onIconSelected;
-
+  
   const _IconGrid({
     required this.icons,
     required this.selectedIcon,
     required this.onIconSelected,
   });
-
+  
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -281,12 +276,12 @@ class _IconGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final icon = icons[index];
         final isSelected = selectedIcon == icon.key;
-
+        
         return InkWell(
           onTap: () => onIconSelected(icon.key),
           child: Container(
             decoration: BoxDecoration(
-              color: isSelected
+              color: isSelected 
                   ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
                   : null,
               border: Border.all(
@@ -303,7 +298,7 @@ class _IconGrid extends StatelessWidget {
                 Icon(
                   icon.iconData,
                   size: 32,
-                  color: isSelected
+                  color: isSelected 
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).iconTheme.color,
                 ),
@@ -311,10 +306,10 @@ class _IconGrid extends StatelessWidget {
                 Text(
                   icon.label,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : null,
-                      ),
+                    color: isSelected 
+                        ? Theme.of(context).colorScheme.primary
+                        : null,
+                  ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -331,7 +326,7 @@ class _IconGrid extends StatelessWidget {
 class _IconCategory {
   final String name;
   final List<_IconItem> icons;
-
+  
   const _IconCategory({
     required this.name,
     required this.icons,
@@ -342,6 +337,6 @@ class _IconItem {
   final String key;
   final IconData iconData;
   final String label;
-
+  
   const _IconItem(this.key, this.iconData, this.label);
 }
