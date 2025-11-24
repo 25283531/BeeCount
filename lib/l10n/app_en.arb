@@ -12,6 +12,7 @@
   "commonConfirm": "Confirm",
   "commonSave": "Save",
   "commonDelete": "Delete",
+  "commonAdd": "Add",
   "commonEdit": "Edit",
   "commonOk": "OK",
   "commonNo": "No",
@@ -21,6 +22,7 @@
   "commonFailed": "Failed",
   "commonBack": "Back",
   "commonNext": "Next",
+  "fabLongPressTip": "Long press to scan receipt",
   "commonPrevious": "Previous",
   "commonFinish": "Finish",
   "commonClose": "Close",
@@ -720,7 +722,7 @@
   },
   "importSelectCsvFile": "Please select a file to import (CSV/TSV/XLSX supported)",
   "exportTitle": "Export",
-  "exportDescription": "Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Recurring Bills\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.",
+  "exportDescription": "Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.",
   "exportButtonIOS": "Export and Share",
   "exportButtonAndroid": "Export Data",
   "exportSavedTo": "Saved to: {path}",
@@ -1399,7 +1401,7 @@
   "configIncludeSupabase": "Supabase cloud service config",
   "configIncludeWebdav": "WebDAV cloud service config",
   "configIncludeAI": "AI smart recognition config",
-  "configIncludeAppSettings": "App settings (language, theme, reminder, etc.)",
+  "configIncludeAppSettings": "App settings (language, appearance, reminder, default account, etc.)",
   "configIncludeRecurringTransactions": "Recurring transactions",
   "ledgersConflictTitle": "Sync Conflict",
   "ledgersConflictMessage": "Local and cloud ledger data are inconsistent, please choose an action:",
@@ -1487,6 +1489,19 @@
   "accountTotalExpense": "Total Expense",
   "accountTotalIncome": "Total Income",
   "accountCurrencyLocked": "This account has transactions and cannot change currency",
+  "accountDefaultIncomeTitle": "Default Income Account",
+  "accountDefaultIncomeDescription": "Auto-select this account when creating income",
+  "accountDefaultExpenseTitle": "Default Expense Account",
+  "accountDefaultExpenseDescription": "Auto-select this account when creating expense",
+  "accountDefaultNone": "Not Set",
+  "accountDefaultSet": "Set: {name}",
+  "@accountDefaultSet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "commonNotice": "Notice",
   "transferTitle": "Transfer",
   "transferFromAccount": "From Account",

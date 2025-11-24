@@ -57,6 +57,26 @@ class AnalyticsHintsSetter {
   }
 }
 
+// ---------- FAB 长按提示持久化 ----------
+final fabLongPressTipDismissedProvider =
+    FutureProvider.autoDispose<bool>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final link = ref.keepAlive();
+  ref.onDispose(() => link.close());
+  return prefs.getBool('fab_long_press_tip_dismissed') ?? false;
+});
+
+class FabTipSetter {
+  Future<void> dismiss() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('fab_long_press_tip_dismissed', true);
+  }
+}
+
+final fabTipSetterProvider = Provider<FabTipSetter>((ref) {
+  return FabTipSetter();
+});
+
 final analyticsHintsSetterProvider = Provider<AnalyticsHintsSetter>((ref) {
   return AnalyticsHintsSetter();
 });
@@ -228,4 +248,46 @@ class FabBehaviorSetter {
 
 final fabBehaviorSetterProvider = Provider<FabBehaviorSetter>((ref) {
   return FabBehaviorSetter();
+});
+
+// 默认收入账户ID持久化
+final defaultIncomeAccountIdProvider =
+    FutureProvider.autoDispose<int?>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final link = ref.keepAlive();
+  ref.onDispose(() => link.close());
+  return prefs.getInt('default_income_account_id');
+});
+
+// 默认支出账户ID持久化
+final defaultExpenseAccountIdProvider =
+    FutureProvider.autoDispose<int?>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final link = ref.keepAlive();
+  ref.onDispose(() => link.close());
+  return prefs.getInt('default_expense_account_id');
+});
+
+class DefaultAccountSetter {
+  Future<void> setDefaultIncomeAccountId(int? accountId) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (accountId == null) {
+      await prefs.remove('default_income_account_id');
+    } else {
+      await prefs.setInt('default_income_account_id', accountId);
+    }
+  }
+
+  Future<void> setDefaultExpenseAccountId(int? accountId) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (accountId == null) {
+      await prefs.remove('default_expense_account_id');
+    } else {
+      await prefs.setInt('default_expense_account_id', accountId);
+    }
+  }
+}
+
+final defaultAccountSetterProvider = Provider<DefaultAccountSetter>((ref) {
+  return DefaultAccountSetter();
 });

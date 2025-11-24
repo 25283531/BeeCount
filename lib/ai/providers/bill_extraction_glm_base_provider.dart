@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_ai_kit/flutter_ai_kit.dart';
 import 'package:flutter_ai_kit_zhipu/flutter_ai_kit_zhipu.dart';
 import '../tasks/bill_extraction_task.dart';
+import '../../services/logger_service.dart';
 
 /// 账单提取GLM Provider基类
 ///
@@ -48,7 +49,10 @@ abstract class BillExtractionGLMBaseProvider implements AIProvider<String, BillI
       );
     }
 
-    // 3. 解析业务结果
+    // 3. 打印AI原始返回结果
+    logger.debug('AI', '[原始返回] ${result.data}');
+
+    // 4. 解析业务结果
     try {
       final billInfo = parseResponse(result.data!);
       return AIResult.success(

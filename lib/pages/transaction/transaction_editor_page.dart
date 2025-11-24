@@ -166,6 +166,33 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
     );
   }
 
+  /// 获取默认账户ID（验证币种匹配）
+  Future<int?> _getDefaultAccountId(String kind, int ledgerId) async {
+    try {
+      // 1. 根据类型获取默认账户ID
+      final defaultAccountId = kind == 'income'
+          ? await ref.read(defaultIncomeAccountIdProvider.future)
+          : await ref.read(defaultExpenseAccountIdProvider.future);
+
+      if (defaultAccountId == null) return null;
+
+      // 2. 获取账本币种
+      final ledger = await ref.read(ledgerByIdProvider(ledgerId).future);
+      if (ledger == null) return null;
+
+      // 3. 获取默认账户信息
+      final account = await ref.read(accountByIdProvider(defaultAccountId).future);
+      if (account == null) return null;
+
+      // 4. 验证币种匹配
+      if (account.currency != ledger.currency) return null;
+
+      return defaultAccountId;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> _onCategorySelected(BuildContext context, Category c, String kind) async {
     if (!widget.quickAdd) {
       Navigator.pop(context, c);
@@ -173,6 +200,13 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
     }
     final db = ref.read(databaseProvider);
     final ledgerId = ref.read(currentLedgerIdProvider);
+
+    // 确定初始账户ID（新建时使用默认账户，编辑时保持原值）
+    int? initialAccountId = widget.initialAccountId;
+    if (widget.editingTransactionId == null && widget.initialAccountId == null) {
+      // 新建模式：尝试获取默认账户
+      initialAccountId = await _getDefaultAccountId(kind, ledgerId);
+    }
 
     await showModalBottomSheet(
       context: context,
@@ -186,7 +220,7 @@ class _TransactionEditorPageState extends ConsumerState<TransactionEditorPage>
         initialDate: widget.initialDate ?? DateTime.now(),
         initialAmount: widget.initialAmount,
         initialNote: widget.initialNote,
-        initialAccountId: widget.initialAccountId,
+        initialAccountId: initialAccountId,
         showAccountPicker: true,
         db: db,
         ledgerId: ledgerId,

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'ai_bill_service.dart';
 import '../../data/db.dart';
 import '../../data/repository.dart';
+import '../logger_service.dart';
 
 /// OCR识别结果
 class OcrResult {
@@ -74,16 +75,18 @@ class OcrService {
   ///
   /// [imageFile] 图片文件
   /// [db] 数据库实例（可选，用于获取账户列表）
+  static const _tag = 'OCR';
+
   Future<OcrResult> recognizePaymentImage(
     File imageFile, {
     BeeDatabase? db,
   }) async {
     final startTime = DateTime.now();
-    print('\n🔍 ========== OCR识别开始 ==========');
+    logger.info(_tag, '========== OCR识别开始 ==========');
 
     try {
       // 1. OCR文本识别
-      print('⏱️ [OCR] 开始文本识别...');
+      logger.debug(_tag, '开始文本识别...');
       final ocrStartTime = DateTime.now();
 
       // 尝试不同的InputImage创建方式,解决华为权限问题
@@ -91,13 +94,13 @@ class OcrService {
 
       try {
         // 方式1: 直接从文件路径读取(适用于大多数设备)
-        print('📁 [OCR] 尝试方式1: 从文件路径读取');
+        logger.debug(_tag, '尝试方式1: 从文件路径读取');
         final inputImage = InputImage.fromFile(imageFile);
         recognizedText = await _textRecognizer.processImage(inputImage);
-        print('✅ [OCR] 方式1成功');
+        logger.debug(_tag, '方式1成功');
       } catch (e) {
-        print('⚠️ [OCR] 方式1失败: $e');
-        print('📁 [OCR] 尝试方式2: 从文件字节读取(解决华为权限问题)');
+        logger.warning(_tag, '方式1失败: $e');
+        logger.debug(_tag, '尝试方式2: 从文件字节读取(解决华为权限问题)');
 
         // 方式2: 先复制文件到App私有目录,再读取
         // 华为系统对Screenshots目录有特殊权限保护
@@ -106,12 +109,12 @@ class OcrService {
 
         // 复制文件
         await imageFile.copy(tempFile.path);
-        print('✅ [OCR] 文件已复制到: ${tempFile.path}');
+        logger.debug(_tag, '文件已复制到: ${tempFile.path}');
 
         // 从临时文件读取
         final inputImage = InputImage.fromFile(tempFile);
         recognizedText = await _textRecognizer.processImage(inputImage);
-        print('✅ [OCR] 方式2成功');
+        logger.debug(_tag, '方式2成功');
 
         // 清理临时文件
         try {
@@ -120,11 +123,10 @@ class OcrService {
       }
       final rawText = recognizedText.text;
       final ocrDuration = DateTime.now().difference(ocrStartTime);
-      print('✅ [OCR] 文本识别完成，耗时: ${ocrDuration.inMilliseconds}ms');
-      print('📄 [OCR] 识别文本:\n$rawText\n');
+      logger.info(_tag, '[文本识别] ${ocrDuration.inMilliseconds}ms');
+      logger.debug(_tag, '识别文本: $rawText');
 
       // 2. 规则提取
-      print('⏱️ [规则] 开始规则提取...');
       final ruleStartTime = DateTime.now();
       final allNumbers = _extractAllNumbers(rawText);
       final amount = _extractAmount(rawText);
@@ -132,11 +134,7 @@ class OcrService {
       final time = _extractTime(rawText);
       final ruleDuration = DateTime.now().difference(ruleStartTime);
 
-      print('✅ [规则] 提取完成，耗时: ${ruleDuration.inMilliseconds}ms');
-      print('💰 [规则] 金额: ${amount ?? "未识别"}');
-      print('🏪 [规则] 商家: ${merchant ?? "未识别"}');
-      print('⏰ [规则] 时间: ${time ?? "未识别"}');
-      print('🔢 [规则] 候选金额: $allNumbers');
+      logger.info(_tag, '[规则提取] ${ruleDuration.inMilliseconds}ms | 金额:${amount ?? "无"} 商家:${merchant ?? "无"} 时间:${time ?? "无"} 候选:$allNumbers');
 
       final baseResult = OcrResult(
         amount: amount,
@@ -154,12 +152,11 @@ class OcrService {
       );
 
       final totalDuration = DateTime.now().difference(startTime);
-      print('🏁 [总计] 识别完成，总耗时: ${totalDuration.inMilliseconds}ms');
-      print('========== OCR识别结束 ==========\n');
+      logger.info(_tag, '[总计] 识别完成 ${totalDuration.inMilliseconds}ms');
 
       return enhancedResult;
     } catch (e) {
-      print('❌ [OCR] 识别失败: $e');
+      logger.error(_tag, '识别失败', e);
       rethrow;
     }
   }
@@ -183,22 +180,23 @@ class OcrService {
         return baseResult;
       }
 
-      print('🤖 [AI增强] 开始...');
+      logger.debug(_tag, '[AI增强] 开始...');
       final aiStartTime = DateTime.now();
 
-      // 获取用户分类列表(从数据库读取)
+      // 获取用户分类列表(从数据库读取，仅获取可用于记账的叶子分类)
       List<String> expenseCategories = [];
       List<String> incomeCategories = [];
       if (db != null) {
         try {
           final repository = BeeRepository(db);
-          final expenseCats = await repository.getTopLevelCategories('expense');
-          final incomeCats = await repository.getTopLevelCategories('income');
+          // 使用 getUsableCategories 获取可用分类（排除有子分类的父分类）
+          final expenseCats = await repository.getUsableCategories('expense');
+          final incomeCats = await repository.getUsableCategories('income');
           expenseCategories = expenseCats.map((c) => c.name).toList();
           incomeCategories = incomeCats.map((c) => c.name).toList();
-          print('📋 [分类列表] 获取到${expenseCategories.length}个支出分类, ${incomeCategories.length}个收入分类');
+          logger.debug(_tag, '[分类列表] 支出${expenseCategories.length}个 收入${incomeCategories.length}个');
         } catch (e) {
-          print('⚠️ [分类列表] 获取失败: $e');
+          logger.warning(_tag, '[分类列表] 获取失败: $e');
         }
       }
 
@@ -210,9 +208,9 @@ class OcrService {
           final repository = BeeRepository(db);
           final allAccounts = await repository.getAllAccounts();
           accounts = allAccounts.map((a) => a.name).toList();
-          print('📋 [账户列表] 获取到${accounts.length}个账户: ${accounts.join('、')}');
+          logger.debug(_tag, '[账户列表] ${accounts.length}个: ${accounts.join('、')}');
         } catch (e) {
-          print('⚠️ [账户列表] 获取失败: $e');
+          logger.warning(_tag, '[账户列表] 获取失败: $e');
           accounts = null;
         }
       }
@@ -239,12 +237,13 @@ class OcrService {
         // 智能合并策略：AI优先，规则兜底
         final mergedAmount = billInfo.amount ?? baseResult.amount;
         final mergedMerchant = billInfo.merchant ?? baseResult.merchant;
-        final mergedTime = billInfo.time ?? baseResult.time;
         final mergedAccount = billInfo.account;
 
+        final mergedTime = billInfo.time ?? baseResult.time;
+
         final typeText = billInfo.type?.toString().split('.').last ?? '未知';
-        final typeEmoji = typeText == 'expense' ? '💸' : (typeText == 'income' ? '💰' : '❓');
-        print('✅ [AI增强] 成功 ${aiDuration.inMilliseconds}ms | $typeEmoji$typeText 金额:$mergedAmount 商家:$mergedMerchant 分类:${billInfo.category} 账户:${mergedAccount ?? "未识别"}');
+        final timeStr = mergedTime?.toString().substring(0, 16) ?? '无';
+        logger.info(_tag, '[AI增强] ${aiDuration.inMilliseconds}ms | $typeText 金额:$mergedAmount 商家:$mergedMerchant 分类:${billInfo.category ?? "无"} 账户:${mergedAccount ?? "无"} 时间:$timeStr');
 
         return baseResult.copyWithAI(
           amount: mergedAmount,
@@ -256,11 +255,11 @@ class OcrService {
           aiProvider: 'AI',
         );
       } else {
-        print('⚠️ [AI增强] 失败或超时，使用规则识别结果');
+        logger.warning(_tag, '[AI增强] 失败或超时，使用规则识别结果');
         return baseResult;
       }
     } catch (e) {
-      print('❌ [AI增强] 失败: $e');
+      logger.error(_tag, '[AI增强] 失败', e);
       return baseResult;
     }
   }

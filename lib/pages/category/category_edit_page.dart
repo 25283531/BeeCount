@@ -83,8 +83,6 @@ class _CategoryEditPageState extends ConsumerState<CategoryEditPage> {
   
   bool get isEditing => widget.category != null;
 
-  bool get isDefaultCategory => false; // 所有分类都可编辑删除
-
   bool get isCreatingSubCategory => widget.parentCategory != null;
 
   @override
@@ -203,33 +201,8 @@ class _CategoryEditPageState extends ConsumerState<CategoryEditPage> {
                     ),
                   ],
 
-                  // 默认分类警告
-                  if (isDefaultCategory) ...[
-                    const SizedBox(height: 16),
-                    Card(
-                      color: BeeTokens.isDark(context) ? Colors.orange[900]!.withValues(alpha: 0.3) : Colors.orange[50],
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.info_outline,
-                          color: BeeTokens.isDark(context) ? Colors.orange[300] : Colors.orange[700],
-                        ),
-                        title: Text(
-                          AppLocalizations.of(context).categoryDefaultTitle,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: BeeTokens.isDark(context) ? Colors.orange[300] : Colors.orange[700],
-                          ),
-                        ),
-                        subtitle: Text(
-                          AppLocalizations.of(context).categoryDefaultMessage,
-                          style: TextStyle(color: BeeTokens.isDark(context) ? Colors.orange[400] : Colors.orange[600]),
-                        ),
-                      ),
-                    ),
-                  ],
-
                   const SizedBox(height: 16),
-                  
+
                   // 分类名称
                   Card(
                     child: Padding(
@@ -244,12 +217,9 @@ class _CategoryEditPageState extends ConsumerState<CategoryEditPage> {
                           const SizedBox(height: 8),
                           TextFormField(
                             controller: _nameController,
-                            enabled: !isDefaultCategory,
                             decoration: InputDecoration(
-                              hintText: isDefaultCategory ? AppLocalizations.of(context).categoryNameHintDefault : AppLocalizations.of(context).categoryNameHint,
+                              hintText: AppLocalizations.of(context).categoryNameHint,
                               border: const OutlineInputBorder(),
-                              fillColor: isDefaultCategory ? BeeTokens.surfaceSecondary(context) : null,
-                              filled: isDefaultCategory,
                             ),
                             maxLength: 4,
                             validator: (value) {
@@ -277,44 +247,18 @@ class _CategoryEditPageState extends ConsumerState<CategoryEditPage> {
                         children: [
                           Text(
                             AppLocalizations.of(context).categoryIconLabel,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: isDefaultCategory ? BeeTokens.textTertiary(context) : null,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 16),
-                          if (isDefaultCategory)
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: BeeTokens.surfaceSecondary(context),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: BeeTokens.border(context)),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    CategoryService.getCategoryIcon(_selectedIcon),
-                                    size: 24,
-                                    color: BeeTokens.textSecondary(context),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    AppLocalizations.of(context).categoryIconDefaultMessage,
-                                    style: TextStyle(color: BeeTokens.textSecondary(context)),
-                                  ),
-                                ],
-                              ),
-                            )
-                          else
-                            _GroupedIconGrid(
-                              selectedIcon: _selectedIcon,
-                              kind: widget.kind,
-                              onIconSelected: (icon) {
-                                setState(() {
-                                  _selectedIcon = icon;
-                                });
-                              },
-                            ),
+                          _GroupedIconGrid(
+                            selectedIcon: _selectedIcon,
+                            kind: widget.kind,
+                            onIconSelected: (icon) {
+                              setState(() {
+                                _selectedIcon = icon;
+                              });
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -350,7 +294,7 @@ class _CategoryEditPageState extends ConsumerState<CategoryEditPage> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             child: FilledButton(
-              onPressed: (_saving || isDefaultCategory) ? null : _saveCategory,
+              onPressed: _saving ? null : _saveCategory,
               child: _saving
                   ? const SizedBox(
                       width: 20,
@@ -360,7 +304,7 @@ class _CategoryEditPageState extends ConsumerState<CategoryEditPage> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(isDefaultCategory ? AppLocalizations.of(context).categoryDefaultCannotSave : AppLocalizations.of(context).commonSave),
+                  : Text(AppLocalizations.of(context).commonSave),
             ),
           ),
         ],

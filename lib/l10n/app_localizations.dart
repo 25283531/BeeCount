@@ -153,6 +153,12 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get commonDelete;
 
+  /// No description provided for @commonAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get commonAdd;
+
   /// No description provided for @commonEdit.
   ///
   /// In en, this message translates to:
@@ -206,6 +212,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get commonNext;
+
+  /// No description provided for @fabLongPressTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press to scan receipt'**
+  String get fabLongPressTip;
 
   /// No description provided for @commonPrevious.
   ///
@@ -3592,7 +3604,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Recurring Bills\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.'**
+  /// **'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.'**
   String get exportDescription;
 
   /// No description provided for @exportButtonIOS.
@@ -6359,7 +6371,7 @@ abstract class AppLocalizations {
   /// No description provided for @configIncludeAppSettings.
   ///
   /// In en, this message translates to:
-  /// **'App settings (language, theme, reminder, etc.)'**
+  /// **'App settings (language, appearance, reminder, default account, etc.)'**
   String get configIncludeAppSettings;
 
   /// No description provided for @configIncludeRecurringTransactions.
@@ -6547,6 +6559,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This account has transactions and cannot change currency'**
   String get accountCurrencyLocked;
+
+  /// No description provided for @accountDefaultIncomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Income Account'**
+  String get accountDefaultIncomeTitle;
+
+  /// No description provided for @accountDefaultIncomeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-select this account when creating income'**
+  String get accountDefaultIncomeDescription;
+
+  /// No description provided for @accountDefaultExpenseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Expense Account'**
+  String get accountDefaultExpenseTitle;
+
+  /// No description provided for @accountDefaultExpenseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-select this account when creating expense'**
+  String get accountDefaultExpenseDescription;
+
+  /// No description provided for @accountDefaultNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Set'**
+  String get accountDefaultNone;
+
+  /// No description provided for @accountDefaultSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set: {name}'**
+  String accountDefaultSet(String name);
 
   /// No description provided for @commonNotice.
   ///
