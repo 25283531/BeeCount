@@ -36,6 +36,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonDelete => '删除';
 
   @override
+  String get commonAdd => '添加';
+
+  @override
   String get commonEdit => '编辑';
 
   @override
@@ -61,6 +64,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get commonNext => '下一步';
+
+  @override
+  String get fabLongPressTip => '长按可拍照记账';
 
   @override
   String get commonPrevious => '上一步';
@@ -241,6 +247,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String searchBatchSetNoteMessage(Object count) {
     return '将为选中的 $count 笔记账设置相同的备注';
   }
+
+  @override
+  String get voiceBilling => '语音记账';
+
+  @override
+  String get voiceBillingDesc => '离线语音识别转文字并解析';
+
+  @override
+  String get voiceBillingSettings => '语音识别设置';
+
+  @override
+  String get voiceBillingPrivacyInfo => '语音识别在设备本地进行，不会上传您的语音数据';
+
+  @override
+  String get voiceBillingDisabledMessage => '语音识别功能已关闭，请在设置中开启';
+
+  @override
+  String get voiceBillingEnabled => '语音识别已开启';
+
+  @override
+  String get voiceBillingDisabled => '语音识别已关闭';
 
   @override
   String get searchBatchSetNoteHint => '输入备注内容 (留空则清空备注)';
@@ -1902,7 +1929,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get exportDescription =>
-      '支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 周期账单\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。';
+      '支持导出的数据类型：\n• 交易记录（收入/支出/转账）\n• 分类信息\n• 账户信息\n\n点击下方按钮选择保存位置，开始导出当前账本为 CSV 文件。';
 
   @override
   String get exportButtonIOS => '导出并分享';
@@ -3364,7 +3391,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get configIncludeAI => 'AI 智能识别配置';
 
   @override
-  String get configIncludeAppSettings => '应用设置（语言、主题、提醒等）';
+  String get configIncludeAppSettings => '应用设置（语言、外观、提醒、默认账户等）';
 
   @override
   String get configIncludeRecurringTransactions => '周期账单';
@@ -3476,6 +3503,26 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountCurrencyLocked => '该账户已有交易记录，不允许修改币种';
 
   @override
+  String get accountDefaultIncomeTitle => '默认收入账户';
+
+  @override
+  String get accountDefaultIncomeDescription => '新建收入时自动选中此账户';
+
+  @override
+  String get accountDefaultExpenseTitle => '默认支出账户';
+
+  @override
+  String get accountDefaultExpenseDescription => '新建支出时自动选中此账户';
+
+  @override
+  String get accountDefaultNone => '不设置';
+
+  @override
+  String accountDefaultSet(String name) {
+    return '已设置: $name';
+  }
+
+  @override
   String get commonNotice => '提示';
 
   @override
@@ -3574,6 +3621,9 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get commonDelete => '刪除';
 
   @override
+  String get commonAdd => '新增';
+
+  @override
   String get commonEdit => '編輯';
 
   @override
@@ -3599,6 +3649,9 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get commonNext => '下一步';
+
+  @override
+  String get fabLongPressTip => '長按可拍照記帳';
 
   @override
   String get commonPrevious => '上一步';
@@ -5439,7 +5492,8 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get exportTitle => '匯出';
 
   @override
-  String get exportDescription => '點擊下方按鈕選擇儲存位置，開始匯出當前帳本為 CSV 檔案。';
+  String get exportDescription =>
+      '支援匯出的資料類型：\n• 交易記錄（收入／支出／轉帳）\n• 分類資訊\n• 帳戶資訊\n\n點擊下方按鈕選擇儲存位置，開始匯出目前帳本為 CSV 檔案。';
 
   @override
   String get exportButtonIOS => '匯出並分享';
@@ -6900,7 +6954,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get configIncludeAI => 'AI 智慧識別配置';
 
   @override
-  String get configIncludeAppSettings => '應用程式設定（語言、主題、提醒等）';
+  String get configIncludeAppSettings => '應用程式設定（語言、外觀、提醒、預設帳戶等）';
 
   @override
   String get configIncludeRecurringTransactions => '週期帳單';

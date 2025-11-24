@@ -552,8 +552,50 @@ abstract class AppLocalizations {
   /// No description provided for @searchBatchSetNoteMessage.
   ///
   /// In en, this message translates to:
-  /// **'Set the same note for the selected {count} transactions'**
+  /// **'Set the same note for {count} selected transactions'**
   String searchBatchSetNoteMessage(Object count);
+
+  /// No description provided for @voiceBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Billing'**
+  String get voiceBilling;
+
+  /// No description provided for @voiceBillingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline voice recognition and text parsing'**
+  String get voiceBillingDesc;
+
+  /// No description provided for @voiceBillingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Recognition Settings'**
+  String get voiceBillingSettings;
+
+  /// No description provided for @voiceBillingPrivacyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice recognition is performed locally on the device and does not upload your voice data'**
+  String get voiceBillingPrivacyInfo;
+
+  /// No description provided for @voiceBillingDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice recognition feature is disabled, please enable it in settings'**
+  String get voiceBillingDisabledMessage;
+
+  /// No description provided for @voiceBillingEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice recognition enabled'**
+  String get voiceBillingEnabled;
+
+  /// No description provided for @voiceBillingDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice recognition disabled'**
+  String get voiceBillingDisabled;
 
   /// No description provided for @searchBatchSetNoteHint.
   ///

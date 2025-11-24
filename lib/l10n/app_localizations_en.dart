@@ -36,6 +36,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonDelete => 'Delete';
 
   @override
+  String get commonAdd => 'Add';
+
+  @override
   String get commonEdit => 'Edit';
 
   @override
@@ -61,6 +64,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonNext => 'Next';
+
+  @override
+  String get fabLongPressTip => 'Long press to scan receipt';
 
   @override
   String get commonPrevious => 'Previous';
@@ -240,8 +246,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String searchBatchSetNoteMessage(Object count) {
-    return 'Set the same note for the selected $count transactions';
+    return 'Set the same note for $count selected transactions';
   }
+
+  @override
+  String get voiceBilling => 'Voice Billing';
+
+  @override
+  String get voiceBillingDesc => 'Offline voice recognition and text parsing';
+
+  @override
+  String get voiceBillingSettings => 'Voice Recognition Settings';
+
+  @override
+  String get voiceBillingPrivacyInfo =>
+      'Voice recognition is performed locally on the device and does not upload your voice data';
+
+  @override
+  String get voiceBillingDisabledMessage =>
+      'Voice recognition feature is disabled, please enable it in settings';
+
+  @override
+  String get voiceBillingEnabled => 'Voice recognition enabled';
+
+  @override
+  String get voiceBillingDisabled => 'Voice recognition disabled';
 
   @override
   String get searchBatchSetNoteHint =>
@@ -1978,7 +2007,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportDescription =>
-      'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Recurring Bills\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.';
+      'Supported export types:\n• Transactions (Income/Expense/Transfer)\n• Categories\n• Accounts\n\nClick the button below to select save location and export current ledger to CSV file.';
 
   @override
   String get exportButtonIOS => 'Export and Share';
@@ -3502,7 +3531,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get configIncludeAppSettings =>
-      'App settings (language, theme, reminder, etc.)';
+      'App settings (language, appearance, reminder, default account, etc.)';
 
   @override
   String get configIncludeRecurringTransactions => 'Recurring transactions';
@@ -3614,6 +3643,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accountCurrencyLocked =>
       'This account has transactions and cannot change currency';
+
+  @override
+  String get accountDefaultIncomeTitle => 'Default Income Account';
+
+  @override
+  String get accountDefaultIncomeDescription =>
+      'Auto-select this account when creating income';
+
+  @override
+  String get accountDefaultExpenseTitle => 'Default Expense Account';
+
+  @override
+  String get accountDefaultExpenseDescription =>
+      'Auto-select this account when creating expense';
+
+  @override
+  String get accountDefaultNone => 'Not Set';
+
+  @override
+  String accountDefaultSet(String name) {
+    return 'Set: $name';
+  }
 
   @override
   String get commonNotice => 'Notice';
