@@ -27,7 +27,7 @@ jobs:
 
       - name: Install Android build-tools and platforms
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;33.0.1"
           sdkmanager --list | grep installed
 
       - name: Setup Flutter
