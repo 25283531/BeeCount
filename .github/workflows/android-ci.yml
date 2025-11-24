@@ -25,10 +25,36 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android build-tools and platforms
+      - name: Install Android build-tools and platforms with retry
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;33.0.1"
-          sdkmanager --list | grep installed
+          # 添加重试机制，最多尝试3次
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            echo "尝试安装Android SDK组件（尝试 $((RETRY_COUNT + 1))/$MAX_RETRIES）..."
+            
+            # 增加更详细的日志输出
+            echo "开始安装Android SDK组件..."
+            if sdkmanager --verbose --install "platform-tools" "platforms;android-34" "build-tools;33.0.0"; then
+              echo "安装成功！"
+              break
+            else
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "安装失败，等待10秒后重试..."
+                sleep 10
+              else
+                echo "安装失败，已达到最大重试次数。"
+                exit 1
+              fi
+            fi
+          done
+          
+          echo "安装完成，列出已安装的组件..."
+          sdkmanager --list | grep -E 'build-tools|platforms'
+          # 检查磁盘空间
+          df -h
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
