@@ -27,7 +27,7 @@ permissions:
   contents: write
 
 env:
-  FLUTTER_VERSION: "3.27.3"
+  FLUTTER_VERSION: "3.38.3"
 
 jobs:
   check-branch:
